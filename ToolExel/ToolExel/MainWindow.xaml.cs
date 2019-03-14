@@ -40,28 +40,6 @@ namespace ToolExel
                 DocDuLieu(openFile.FileName);
             }
         }
-        public void XuatBang(List<Email> list, string duongDan)
-        {
-            //Install-Package DocX -Version 1.1.0
-            Xceed.Words.NET.DocX doc = Xceed.Words.NET.DocX.Create(duongDan+".xlsx");
-            Xceed.Words.NET.Table table = doc.AddTable(list.Count + 1, 2);
-            table.Rows[0].Cells[0].Paragraphs.First().Append("STT");
-            table.Rows[0].Cells[1].Paragraphs.First().Append("UID");
-            table.Rows[0].Cells[0].Paragraphs.First().Append("Tên");
-            table.Rows[0].Cells[1].Paragraphs.First().Append("Mail");
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (KiemTra(list[i]))
-                {
-                    table.Rows[i + 1].Cells[0].Paragraphs.First().Append(/*Nội dung cột 1*/list[i].STT.ToString() /*Nội dung cột 1*/);
-                    table.Rows[i + 1].Cells[0].Paragraphs.First().Append(/*Nội dung cột 1*/list[i].UID.ToString() /*Nội dung cột 1*/);
-                    table.Rows[i + 1].Cells[0].Paragraphs.First().Append(/*Nội dung cột 1*/list[i].Name.ToString() /*Nội dung cột 1*/);
-                    table.Rows[i + 1].Cells[1].Paragraphs.First().Append(/*Nội dung cột 2*/list[i].Mail.ToString() /*Nội dung cột 2*/);
-                }
-            }
-            doc.InsertTable(table);
-            doc.Save();
-        }
         public void DocDuLieu(string filePath)
         {
             try
@@ -102,7 +80,8 @@ namespace ToolExel
                                         email.SoBan = int.Parse(cells[i, CellsHelper.ColumnNameToIndex("Q")].Value.ToString());
                                     }
                                     catch { }
-                                    if (email.SoBan != -1 || email.Mail.Contains(".vn") | string.IsNullOrEmpty(email.Mail))
+                                    if (email.SoBan != -1 && !email.Mail.Contains(".vn") &&
+                                        !string.IsNullOrEmpty(email.Mail) && !email.Mail.Contains("yahoo") && !email.Mail.Contains("yaho"))
                                     {
                                         danhSachTaiKhoan.Add(email);
                                     }

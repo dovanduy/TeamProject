@@ -79,7 +79,7 @@ namespace FakeBackup
                                     danhSachId.Add(_id);
                                     URL = string.Concat(new string[] { URL, "{\"method\":\"GET\",\"relative_url\":\"?ids=", _id,
                                             "&fields=id,name,picture,photos.limit(", "15", "){source,width,height}\"}," });
-                                    if (danhSachId.Count == 200 ? true : i == friend)
+                                    if (danhSachId.Count == 200 ? true : i == friend -1 )
                                     {
                                         URL = string.Concat("[", URL, "]");
                                         string BODY = string.Concat(new string[] { "access_token=", (Uri.EscapeDataString(txtToken.Text.Trim())), "&batch=", (Uri.EscapeDataString(URL)) });
