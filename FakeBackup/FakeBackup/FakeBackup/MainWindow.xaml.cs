@@ -38,8 +38,11 @@ namespace FakeBackup
                 Directory.CreateDirectory(PATH_FOLDER);
             }
         }
-        public void Run(Model model, string responceResult)
+        public async void Run(Model model)
         {
+            string url = "https://z-m-graph.facebook.com/" + model.UID + "/friends?limit=5000&access_token=" + txtToken.Text;
+            string responceResult = await GetDataJson(url, "");
+        
             List<string> danhSachAnh = new List<string>();
             HttpRequest httpRequest = new HttpRequest();
             bool flag = true;
@@ -61,88 +64,82 @@ namespace FakeBackup
                     {
                         model.TrangThai = "Đang backup!";
                         int friend = dataJson_fr["data"].Count<JToken>();
-                        if (true)
+
+                        List<string> danhSachId = new List<string>();
+                        string URL = "";
+                        string responce = "";
+                        for (int i = 0; i < friend; i++)
                         {
-                            List<string> danhSachId = new List<string>();
-                            string URL = "";
-                            string responce = "";
-                            for (int i = 0; i < friend; i++)
+                            if (dataJson_fr["data"][i]["id"] != null && dataJson_fr["data"][i]["name"] != null)
                             {
-                                if (dataJson_fr["data"][i]["id"] != null && dataJson_fr["data"][i]["name"] != null)
+                                string _id = dataJson_fr["data"][i]["id"].ToString();
+                                string _name = dataJson_fr["data"][i]["name"].ToString();
+                                try
                                 {
-                                    string _id = dataJson_fr["data"][i]["id"].ToString();
-                                    string _name = dataJson_fr["data"][i]["name"].ToString();
-                                    try
-                                    {
-
-                                        danhSachId.Add(_id);
-                                        URL = string.Concat(new string[] { URL, "{\"method\":\"GET\",\"relative_url\":\"?ids=", _id,
+                                    danhSachId.Add(_id);
+                                    URL = string.Concat(new string[] { URL, "{\"method\":\"GET\",\"relative_url\":\"?ids=", _id,
                                             "&fields=id,name,picture,photos.limit(", "15", "){source,width,height}\"}," });
-                                        if (danhSachId.Count == 50 ? true : i == friend)
+                                    if (danhSachId.Count == 200 ? true : i == friend)
+                                    {
+                                        URL = string.Concat("[", URL, "]");
+                                        string BODY = string.Concat(new string[] { "access_token=", (Uri.EscapeDataString(txtToken.Text.Trim())), "&batch=", (Uri.EscapeDataString(URL)) });
+
+                                        try
                                         {
-                                            URL = string.Concat("[", URL, "]");
-                                            string BODY = "";
-                                            Dispatcher.Invoke(new Action(() =>
-                                            {
-                                                BODY = string.Concat(new string[] { "access_token=", (Uri.EscapeDataString(txtToken.Text.Trim())), "&batch=", (Uri.EscapeDataString(URL)) });
-                                            }), DispatcherPriority.ContextIdle);
-
-                                            try
-                                            {
-                                                responce = httpRequest.Post("https://graph.facebook.com", BODY, "application/x-www-form-urlencoded").ToString();
-                                            }
-                                            catch (Exception ex)
-                                            {
-
-                                            }
-                                            if (string.IsNullOrEmpty(responce))
-                                            {
-                                            }
-                                            else
-                                            {
-
-                                                JArray jArrays = JArray.Parse(responce);
-                                                for (int j = 0; j < jArrays.Count; j++)
-                                                {
-                                                    string id_ = danhSachId[j];
-                                                    try
-                                                    {
-                                                        JObject jObjects2 = JObject.Parse(jArrays[j]["body"].ToString());
-                                                        string arr = jObjects2[id_]["photos"]["data"].ToString();
-                                                        JArray jArrayDanhSach = JArray.Parse(arr);
-                                                        for (int k = 0; k < jArrayDanhSach.Count; k++)
-                                                        {
-                                                            danhSachAnh.Add(danhSachId[j] + "*" +
-                                                                jObjects2[danhSachId[j]]["name"].ToString() + "*" +
-                                                                jArrayDanhSach[k]["source"].ToString() + "|" + jArrayDanhSach[k]["width"] + "|" + jArrayDanhSach[k]["height"].ToString());
-                                                        }
-                                                        danhSachAnh.Add("\r\n");
-                                                    }
-                                                    catch (Exception ex)
-                                                    {
-                                                        Console.Write(ex);
-                                                    }
-                                                }
-
-                                            }
-                                            URL = "";
-                                            danhSachId.Clear();
+                                            responce = httpRequest.Post("https://graph.facebook.com", BODY, "application/x-www-form-urlencoded").ToString();
                                         }
+                                        catch (Exception ex)
+                                        {
+
+                                        }
+                                        if (string.IsNullOrEmpty(responce))
+                                        {
+                                        }
+                                        else
+                                        {
+
+                                            JArray jArrays = JArray.Parse(responce);
+                                            for (int j = 0; j < jArrays.Count; j++)
+                                            {
+                                                string id_ = danhSachId[j];
+                                                try
+                                                {
+                                                    JObject jObjects2 = JObject.Parse(jArrays[j]["body"].ToString());
+                                                    string arr = jObjects2[id_]["photos"]["data"].ToString();
+                                                    JArray jArrayDanhSach = JArray.Parse(arr);
+                                                    for (int k = 0; k < jArrayDanhSach.Count; k++)
+                                                    {
+                                                        danhSachAnh.Add(danhSachId[j] + "*" +
+                                                            jObjects2[danhSachId[j]]["name"].ToString() + "*" +
+                                                            jArrayDanhSach[k]["source"].ToString() + "|" + jArrayDanhSach[k]["width"] + "|" + jArrayDanhSach[k]["height"].ToString());
+                                                    }
+                                                    danhSachAnh.Add("\r\n");
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    Console.Write(ex);
+                                                }
+                                            }
+
+                                        }
+                                        URL = "";
+                                        danhSachId.Clear();
                                     }
-                                    catch (Exception ex)
-                                    {
-                                        flag = false;
-                                        model.TrangThai = "Backup thất bại";
-                                        GC.Collect();
-                                        return;
-                                    }
-                                    finally
-                                    {
-                                        GC.Collect();
-                                    }
+                                }
+                                catch (Exception ex)
+                                {
+                                    flag = false;
+                                    model.TrangThai = "Backup thất bại";
+                                    GC.Collect();
+                                    return;
+                                }
+                                finally
+                                {
+                                    GC.Collect();
                                 }
                             }
                         }
+
                     }
                     else
                     {
@@ -175,15 +172,10 @@ namespace FakeBackup
             {
                 foreach (var model in danhSachUID)
                 {
-                    string url = "https://z-m-graph.facebook.com/" + model.UID + "/friends?limit=5000&access_token=" + txtToken.Text;
-                    string responceResult = await GetDataJson(url, "");
-                    await Task.Run(()=> {
-                        Run(model, responceResult);
-                    }); 
+                    Run(model);
                 }
             }
             btnBackup.IsEnabled = true;
-
         }
         public void TaoFile(string fileName, List<string> listTimeLine)
         {
