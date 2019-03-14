@@ -19,19 +19,14 @@ namespace Bussiness
         public IWebDriver driver { get; set; }
         public WebDriverWait waiter { get; set; }
         public string Email { get; set; }
-
         [FindsBy(How = How.XPath, Using = "//div[@id='bookmarks_jewel']")]
         public IWebElement Menu { get; set; }
-
         [FindsBy(How = How.XPath, Using = "//div//a[@href='/settings/?entry_point=bookmark']")]
         public IWebElement Setting { get; set; }
-
         [FindsBy(How = How.XPath, Using = "//div//div//div//div//div//span//input")]
         public IWebElement CountryText { get; set; }
-
         [FindsBy(How = How.XPath, Using = "//div[@class='_5r7k _5r7m']")]
         public IList<IWebElement> Profile { get; set; }
-
         [FindsBy(How = How.XPath, Using = "//div//div//h3//span//span")]
         public IList<IWebElement> MailInfo { get; set; }
         [FindsBy(How = How.XPath, Using = "//input[@class='_4b7k _4b7k_big _53rs']")]
@@ -46,6 +41,8 @@ namespace Bussiness
         public IList<IWebElement> CompanyForm { get; set; }
         [FindsBy(How = How.XPath, Using = "//div//span//div//div//button")]
         public IList<IWebElement> ButtonSubmit { get; set; }
+        [FindsBy(How = How.XPath, Using = "//div//span//div//div//button")]
+        public IWebElement ButtonFinish { get; set; }
         [FindsBy(How = How.XPath, Using = "//div[@class = '_2ha7']//button")]
         public IWebElement ButtomCombobox { get; set; }
         [FindsBy(How = How.XPath, Using = "//div//div//div//div//div//div//span//div//div//div//div//div//div")]
@@ -55,7 +52,6 @@ namespace Bussiness
         /// </summary>
         [FindsBy(How = How.XPath, Using = "")]
         public IWebElement NextSubmit { get; set; } // Loop 3
-
         public GetEmail(IWebDriver dri)
         {
             ChromeDriverService chromeDriverService = ChromeDriverService.CreateDefaultService(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
@@ -161,12 +157,15 @@ namespace Bussiness
                     driver.Close();
                     return false;
                 }
-                return false;
             }
             catch
             {
                 driver.Close();
                 return false;
+            }
+            finally
+            {
+                GC.Collect();
             }
         }
         public string RandomString(int length)
@@ -222,7 +221,7 @@ namespace Bussiness
                                 {
                                     Thread.Sleep(1500);
                                     CountryText.SendKeys("Vi");
-                                    Thread.Sleep(1500);
+                                    Thread.Sleep(1200);
                                     if (ElementsIsVisible(By.XPath("//div//div//div//div//div//div//span//div//div//div//div//div//div")))
                                     {
                                         if (ElementIsVisible(ListCountry[0]))
@@ -255,6 +254,11 @@ namespace Bussiness
                                 if (ElementIsVisible(ButtonSubmit[1]))
                                 {
                                     ButtonSubmit[1].Click();
+                                    Thread.Sleep(1000);
+                                    if (ElementIsVisible(ButtonFinish))
+                                    {
+                                        ButtonFinish.Click();
+                                    }
                                     Email = "Thành công!!";
                                     driver.Close();
                                     return;
@@ -277,14 +281,14 @@ namespace Bussiness
                 }
                 else
                 {
-                    Email = "Nhập thông tin tên BM thất bại";
+                    Email = "Nhập thông tin BM thất bại";
                     driver.Close();
                     return;
                 }
             }
             else
             {
-                Email = "Tài khoản đã được tạo rồi";
+                Email = "Tài khoản đã được tạo";
                 driver.Close();
                 return;
             }
@@ -302,7 +306,6 @@ namespace Bussiness
                 var ignoredExceptions = new List<Type>() { typeof(StaleElementReferenceException) };
                 waiter.IgnoreExceptionTypes(ignoredExceptions.ToArray());
                 waiter.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(element));
-
                 return true;
             }
             catch
