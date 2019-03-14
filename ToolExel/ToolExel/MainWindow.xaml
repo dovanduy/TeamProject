@@ -1,0 +1,183 @@
+﻿<Window x:Class="ToolExel.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ToolExel"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="ToolWindow"
+        ResizeMode="NoResize"
+        Title="Lọc tài khoản" Height="600" Width="1000">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition></RowDefinition>
+            <RowDefinition Height="3*"></RowDefinition>
+            <RowDefinition Height="6*"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition  Width="5*"></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <TextBox IsReadOnly="True" Name="txtPath" Margin="10 15 5 15"></TextBox>
+            <Button Name="btnImport" Click="btnImport_Click" Grid.Column="1" Margin="5 15 5 15">Import</Button>
+        </Grid>
+        <TextBox Width="950" Height="125" Margin="10" Grid.Row="1" Name="txtTaiKhoan"
+                   HorizontalAlignment="Center" AcceptsReturn="True" VerticalAlignment="Center" TextWrapping="Wrap" ></TextBox>
+        <DataGrid
+            Grid.Row="2"
+                  IsReadOnly="True"
+                  GridLinesVisibility="All"
+                  SelectionUnit="FullRow"
+                  HeadersVisibility="Column"
+                  SelectionMode="Single"
+                  Background="Transparent"
+                  BorderBrush="Transparent"
+                  HorizontalGridLinesBrush="Gray"
+                  VerticalGridLinesBrush="Gray"
+                  Height="auto"
+                  Width="auto"              
+                  ItemsSource="{Binding}"
+                  x:Name="dataGridDanhSachTaiKhoan"
+                  CanUserAddRows="False"
+                  FontSize="13" AutoGenerateColumns="False" Margin="-5,10,5,-10">
+            <DataGrid.Columns>
+                <!--UID-->
+                <DataGridTemplateColumn     
+                    CanUserSort="True"
+                    Width="0.3*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock       
+                                IsHitTestVisible="False"
+                                Text="{Binding STT}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Padding="5 7.5 5 7.5"
+                                Height="30"
+                                Foreground="Black"
+                                TextTrimming="WordEllipsis">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                Text="STT">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+                <!--Name-->
+                <DataGridTemplateColumn     
+                    CanUserSort="True"
+                    Width="0.8*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock       
+                                IsHitTestVisible="False"
+                                Text="{Binding UID}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Padding="5 7.5 5 7.5"
+                                Height="30"
+                                Foreground="Black"
+                                TextTrimming="WordEllipsis">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                Text="UID">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+                <!--Password-->
+                <DataGridTemplateColumn     
+                    CanUserSort="True"
+                    Width="0.8*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock       
+                                IsHitTestVisible="False"
+                                Text="{Binding Name}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Padding="5 7.5 5 7.5"
+                                Height="30"
+                                Foreground="Black"
+                                TextTrimming="WordEllipsis">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                Text="Name">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+                <!--Token-->
+                <DataGridTemplateColumn     
+                    CanUserSort="True"
+                    Width="0.8*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock       
+                                IsHitTestVisible="False"
+                                Text="{Binding Mail}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Padding="5 7.5 5 7.5"
+                                Height="30"
+                                Foreground="Black"
+                                TextTrimming="WordEllipsis">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                Text="Email">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+                <!--Cookie-->
+                <DataGridTemplateColumn     
+                    CanUserSort="True"
+                    Width="0.3*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock       
+                                IsHitTestVisible="False"
+                                Text="{Binding SoBan}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Padding="5 7.5 5 7.5"
+                                Height="30"
+                                Foreground="Black"
+                                TextTrimming="WordEllipsis">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                Text="Public">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Name="btnExport" 
+                Click="btnExport_Click"
+                Grid.Row="3" Margin="100 10 100 10" Content="Export"></Button>
+    </Grid>
+</Window>

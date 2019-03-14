@@ -1,0 +1,100 @@
+﻿<Window x:Class="FakeBackup.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:FakeBackup"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Height="600" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="4*"></RowDefinition>
+            <RowDefinition Height="4*"></RowDefinition>
+            <RowDefinition></RowDefinition>
+        </Grid.RowDefinitions>
+        <TextBox Margin="10"
+                 Grid.Row="0"
+                 FontSize="18"
+                 Name="txtToken"></TextBox>
+        <TextBox Margin="10" Grid.Row="1"
+                 Name="txtDanhSachId"
+                 FontSize="18"
+                 TextWrapping="Wrap"
+                 AcceptsReturn="True"></TextBox>
+        <DataGrid
+            Margin="10 0 10 0"
+                  IsReadOnly="True"
+                Grid.Row="2"
+                  GridLinesVisibility="All"
+                  SelectionUnit="FullRow"
+                  SelectionMode="Single"
+                  HorizontalGridLinesBrush="Gray"
+                  VerticalGridLinesBrush="Gray"
+                  ItemsSource="{Binding}"
+                  x:Name="dataGridDanhSachTaiKhoan"
+                  CanUserAddRows="False"
+                  FontSize="13" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <!--UID-->
+                <DataGridTemplateColumn     
+                    CanUserSort="True"
+                    Width="5*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock       
+                                IsHitTestVisible="False"
+                                Text="{Binding UID}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Height="30"
+                                Foreground="Black"
+                                TextTrimming="WordEllipsis">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                Text="UID">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn     
+                    CanUserSort="True"
+                    Width="5*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock       
+                                IsHitTestVisible="False"
+                                Text="{Binding TrangThai}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Height="30"
+                                Foreground="Black"
+                                TextTrimming="WordEllipsis">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                Text="STATUS">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+
+        </DataGrid>
+
+        <Button Margin="50 5 50 5"
+                Grid.Row="3"
+                Content="Backup"
+                Name="btnBackup"
+                Click="btnBackup_Click"
+                ></Button>
+    </Grid>
+</Window>
