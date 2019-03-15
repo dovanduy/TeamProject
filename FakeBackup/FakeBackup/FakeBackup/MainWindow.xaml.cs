@@ -83,21 +83,18 @@ namespace FakeBackup
                                     {
                                         URL = string.Concat("[", URL, "]");
                                         string BODY = string.Concat(new string[] { "access_token=", (Uri.EscapeDataString(txtToken.Text.Trim())), "&batch=", (Uri.EscapeDataString(URL)) });
-
                                         try
                                         {
                                             responce = httpRequest.Post("https://graph.facebook.com", BODY, "application/x-www-form-urlencoded").ToString();
                                         }
                                         catch (Exception ex)
                                         {
-
                                         }
                                         if (string.IsNullOrEmpty(responce))
                                         {
                                         }
                                         else
                                         {
-
                                             JArray jArrays = JArray.Parse(responce);
                                             for (int j = 0; j < jArrays.Count; j++)
                                             {
@@ -109,8 +106,8 @@ namespace FakeBackup
                                                     JArray jArrayDanhSach = JArray.Parse(arr);
                                                     for (int k = 0; k < jArrayDanhSach.Count; k++)
                                                     {
-                                                        danhSachAnh.Add(danhSachId[j] + "*" +
-                                                            jObjects2[danhSachId[j]]["name"].ToString() + "*" +
+                                                        danhSachAnh.Add(id_ + "*" +
+                                                            jObjects2[id_]["name"].ToString() + "*" +
                                                             jArrayDanhSach[k]["source"].ToString() + "|" + jArrayDanhSach[k]["width"] + "|" + jArrayDanhSach[k]["height"].ToString());
                                                     }
                                                     danhSachAnh.Add("\r\n");
@@ -120,7 +117,6 @@ namespace FakeBackup
                                                     Console.Write(ex);
                                                 }
                                             }
-
                                         }
                                         URL = "";
                                         danhSachId.Clear();
