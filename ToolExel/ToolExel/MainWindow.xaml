@@ -8,15 +8,15 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="ToolWindow"
         ResizeMode="NoResize"
-        Title="Lọc tài khoản" Height="600" Width="1000">
+        Title="Lọc tài khoản" Height="800" Width="1000">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition></RowDefinition>
-            <RowDefinition Height="3*"></RowDefinition>
+            <RowDefinition Height="1.2*"></RowDefinition>
+            <RowDefinition Height="5*"></RowDefinition>
             <RowDefinition Height="6*"></RowDefinition>
-            <RowDefinition></RowDefinition>
+            <RowDefinition Height="1*"></RowDefinition>
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0">
+        <Grid Margin="5 2 2 5" Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition  Width="5*"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
@@ -24,8 +24,25 @@
             <TextBox IsReadOnly="True" Name="txtPath" Margin="10 15 5 15"></TextBox>
             <Button Name="btnImport" Click="btnImport_Click" Grid.Column="1" Margin="5 15 5 15">Import</Button>
         </Grid>
-        <TextBox Width="950" Height="125" Margin="10" Grid.Row="1" Name="txtTaiKhoan"
-                   HorizontalAlignment="Center" AcceptsReturn="True" VerticalAlignment="Center" TextWrapping="Wrap" ></TextBox>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <GroupBox Margin="5" Header="Danh sách mail">
+                <TextBox Width="450" Height="200" Margin="10" Grid.Row="1" Name="txtTaiKhoan"
+                   HorizontalAlignment="Center" 
+                     AcceptsReturn="True" VerticalAlignment="Center"
+                     TextWrapping="Wrap" ></TextBox>
+            </GroupBox>
+            <GroupBox Margin="5" Grid.Column="1" Header="Danh sách quốc gia">
+                <TextBox Width="450" Height="200" Name="txtDanhSachQuocGia" Margin="10" Grid.Row="1"
+                   HorizontalAlignment="Center" 
+                     AcceptsReturn="True" VerticalAlignment="Center"
+                     TextWrapping="Wrap" ></TextBox>
+            </GroupBox>
+        </Grid>
+       
         <DataGrid
             Grid.Row="2"
                   IsReadOnly="True"
@@ -42,7 +59,7 @@
                   ItemsSource="{Binding}"
                   x:Name="dataGridDanhSachTaiKhoan"
                   CanUserAddRows="False"
-                  FontSize="13" AutoGenerateColumns="False" Margin="-5,10,5,-10">
+                  FontSize="13" AutoGenerateColumns="False" Margin="10">
             <DataGrid.Columns>
                 <!--UID-->
                 <DataGridTemplateColumn     
@@ -73,7 +90,7 @@
                 <!--Name-->
                 <DataGridTemplateColumn     
                     CanUserSort="True"
-                    Width="0.8*">
+                    Width="0.6*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock       
@@ -99,7 +116,7 @@
                 <!--Password-->
                 <DataGridTemplateColumn     
                     CanUserSort="True"
-                    Width="0.8*">
+                    Width="0.6*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock       
@@ -148,6 +165,31 @@
                         </DataTemplate>
                     </DataGridTemplateColumn.HeaderTemplate>
                 </DataGridTemplateColumn>
+                <DataGridTemplateColumn     
+                    CanUserSort="True"
+                    Width="0.5*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock       
+                                IsHitTestVisible="False"
+                                Text="{Binding QuocGia}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Padding="5 7.5 5 7.5"
+                                Height="30"
+                                Foreground="Black"
+                                TextTrimming="WordEllipsis">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.HeaderTemplate>
+                        <DataTemplate>
+                            <TextBlock 
+                                Text="Quốc Gia">
+                            </TextBlock>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.HeaderTemplate>
+                </DataGridTemplateColumn>
                 <!--Cookie-->
                 <DataGridTemplateColumn     
                     CanUserSort="True"
@@ -176,8 +218,13 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Name="btnExport" 
+        <StackPanel HorizontalAlignment="Center" Grid.Row="3"  Orientation="Horizontal">
+        <Button Background="BurlyWood" Width="200" Height="40" Name="btnExport" 
                 Click="btnExport_Click"
-                Grid.Row="3" Margin="100 10 100 10" Content="Export"></Button>
+                Content="Export"></Button>
+            <Button  Background="Azure" Margin="50 0 0 0" Width="200" Height="40" Name="btnLamMoi" 
+                Click="BtnLamMoi_Click"
+                Content="Làm mới"></Button>
+        </StackPanel>
     </Grid>
 </Window>

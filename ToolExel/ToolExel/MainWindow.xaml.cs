@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,6 +32,11 @@ namespace ToolExel
 
         private void btnImport_Click(object sender, RoutedEventArgs e)
         {
+            if (danhSachTaiKhoan.Count > 0)
+            {
+                MessageBox.Show("Khổng thể làm việc với nhiều file 1 lúc");
+                return;
+            }
             ModifyInMemory.ActivateMemoryPatching();
             OpenFileDialog openFile = new OpenFileDialog();
             openFile.Filter = "Excel Files|*.xls;*.xlsx;*.xlsm";
@@ -80,10 +86,18 @@ namespace ToolExel
                                         email.SoBan = int.Parse(cells[i, CellsHelper.ColumnNameToIndex("Q")].Value.ToString());
                                     }
                                     catch { }
-                                    if (email.SoBan != -1 && !email.Mail.Contains(".vn") &&
-                                        !string.IsNullOrEmpty(email.Mail) && !email.Mail.Contains("yahoo") && !email.Mail.Contains("yaho"))
+                                    try
                                     {
-                                        danhSachTaiKhoan.Add(email);
+                                        email.QuocGia = (cells[i, CellsHelper.ColumnNameToIndex("I")].Value.ToString());
+                                    }
+                                    catch { }
+                                    if (email.SoBan != -1 && !string.IsNullOrEmpty(email.Mail) && email.Mail.Contains("@yahoo.com") && !email.Mail.Contains(".vn"))
+                                    {
+                                        List<string> regex = email.Mail.Split(new[] { ".com" }, StringSplitOptions.None).ToList();
+                                        if (string.IsNullOrEmpty(regex[regex.Count - 1]))
+                                        {
+                                            danhSachTaiKhoan.Add(email);
+                                        }
                                     }
                                 }
                                 catch
@@ -110,14 +124,14 @@ namespace ToolExel
         }
         public void XuatDuLieu(string path)
         {
-            List<Email> ds = danhSachTaiKhoan.Where(model => KiemTra(model)).ToList();
+            List<Email> ds = danhSachTaiKhoan.Where(model => KiemTra(model) && KiemTraQuocGia(model)).ToList();
             try
             {
 
                 Workbook wb = new Workbook();
                 Worksheet sheet = wb.Worksheets[0];
                 sheet.Cells.ImportCustomObjects(ds,
-                        new string[] { "STT" , "UID", "Name", "Mail", "SoBan" },
+                        new string[] { "STT" , "UID", "Name", "Mail", "QuocGia", "SoBan" },
                         true,
                         0,
                         0,
@@ -155,6 +169,26 @@ namespace ToolExel
         public bool KiemTra(Email email)
         {
             List<string> ds = txtTaiKhoan.Text.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (ds.Count == 0)
+            {
+                return true;
+            }
+            foreach (var item in ds)
+            {
+                if (ds.Contains(email.Mail))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public bool KiemTraQuocGia(Email email)
+        {
+            List<string> ds = txtDanhSachQuocGia.Text.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+            if (ds.Count == 0)
+            {
+                return true;
+            }
 
             foreach (var item in ds)
             {
@@ -164,6 +198,23 @@ namespace ToolExel
                 }
             }
             return false;
+        }
+
+        private void BtnLamMoi_Click(object sender, RoutedEventArgs e)
+        {
+            danhSachTaiKhoan.Clear();
+            txtDanhSachQuocGia.Text = "";
+            txtTaiKhoan.Text = "";
+            var excelProcesses = Process.GetProcessesByName(txtPath.Text);
+            foreach (var process in excelProcesses)
+            {
+                if (process.MainWindowTitle == $"Microsoft Excel - {txtPath.Text}") ; // String.Format for pre-C# 6.0 
+                {
+                    process.Kill();
+                }
+            }
+            txtPath.Text = "";
+
         }
     }
 }
