@@ -57,6 +57,11 @@ namespace ToolExel
 
         public event NotifyCollectionChangedEventHandler CollectionChanged;
 
+        public static explicit operator NotifiableCollection<T>(List<Email> v)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }

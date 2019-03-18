@@ -21,25 +21,56 @@
                 <ColumnDefinition  Width="5*"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <TextBox IsReadOnly="True" Name="txtPath" Margin="10 15 5 15"></TextBox>
+            <TextBox FontSize="18" IsReadOnly="True" Name="txtPath" Margin="10 15 5 15"></TextBox>
             <Button Name="btnImport" Click="btnImport_Click" Grid.Column="1" Margin="5 15 5 15">Import</Button>
         </Grid>
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition></ColumnDefinition>
+                <ColumnDefinition Width="2*"></ColumnDefinition>
                 <ColumnDefinition></ColumnDefinition>
             </Grid.ColumnDefinitions>
-            <GroupBox Margin="5" Header="Danh sách mail">
-                <TextBox Width="450" Height="200" Margin="10" Grid.Row="1" Name="txtTaiKhoan"
+            <GroupBox FontStyle="Italic" Margin="5" Header="Danh sách mail">
+                <TextBox Width="600" FontSize="15" Height="220" Margin="10" Grid.Row="1" Name="txtTaiKhoan"
                    HorizontalAlignment="Center" 
                      AcceptsReturn="True" VerticalAlignment="Center"
                      TextWrapping="Wrap" ></TextBox>
             </GroupBox>
-            <GroupBox Margin="5" Grid.Column="1" Header="Danh sách quốc gia">
-                <TextBox Width="450" Height="200" Name="txtDanhSachQuocGia" Margin="10" Grid.Row="1"
+            <GroupBox FontStyle="Italic" Margin="5" Grid.Column="1" Header="Điều kiện lọc">
+                <!--<TextBox Width="450" Height="200" Name="txtDanhSachQuocGia" Margin="10" Grid.Row="1"
                    HorizontalAlignment="Center" 
                      AcceptsReturn="True" VerticalAlignment="Center"
-                     TextWrapping="Wrap" ></TextBox>
+                     TextWrapping="Wrap" ></TextBox>-->
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+                    </Grid.RowDefinitions>
+                    <StackPanel Name="stQuocGia" Margin="7 10 0 0" Grid.Row="0" Orientation="Vertical">
+                        <TextBlock Margin="2 2 2 2" FontSize="15" Text="Quốc gia" FontWeight="Bold"></TextBlock>
+                        <ComboBox SelectedValuePath="{Binding TenQuocGia}" SelectionChanged="CbQuocGia_SelectionChanged" Name="cbQuocGia" SelectedIndex="0" ItemsSource="{Binding}" Height="35">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontStyle="Normal"  FontSize="18" Text="{Binding TenQuocGia}"></TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Name="stLoaiMail" Margin="7 10 0 0" Grid.Row="1" Orientation="Vertical">
+                        <TextBlock Margin="2 2 2 2" FontSize="15" Text="Loại mail" FontWeight="Bold"></TextBlock>
+                        <ComboBox SelectedValuePath="{Binding TenLoaiMail}" SelectionChanged="CbLoaiMail_SelectionChanged"  Name="cbLoaiMail" SelectedIndex="0" ItemsSource="{Binding}" Height="35">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock FontStyle="Normal" FontSize="18" Text="{Binding TenLoaiMail}"></TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel  Margin="0 0 20 0" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Bottom" Orientation="Horizontal">
+                        <TextBlock FontSize="20" FontStyle="Normal" FontWeight="Bold" Text="Tổng số: "></TextBlock>
+                        <TextBlock FontSize="18" Name="txtTongSo" FontStyle="Italic">3000 </TextBlock>
+                    </StackPanel>
+                </Grid>
             </GroupBox>
         </Grid>
        
