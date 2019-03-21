@@ -31,6 +31,8 @@ namespace GoCheckPoint
         {
             InitializeComponent();
             dataGridDanhSachTaiKhoan.DataContext = danhSachTaiKhoan;
+            ClearMemory();
+            CloseAllTabChrome();
         }
 
         private void BtnChay_Click(object sender, RoutedEventArgs e)

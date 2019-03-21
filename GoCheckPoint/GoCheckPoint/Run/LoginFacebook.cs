@@ -80,18 +80,58 @@ namespace GoCheckPoint.Run
         }
         public void GoCheckpoint(TaiKhoanModel taiKhoanModel)
         {
-            if (!string.IsNullOrEmpty(taiKhoanModel.Cookie))
+            try
             {
-                taiKhoanModel.TrangThai = "Đang đang nhập bằng cookie";
-                SetCookies(taiKhoanModel.Cookie);
+                if (!string.IsNullOrEmpty(taiKhoanModel.Cookie))
+                {
+                    taiKhoanModel.TrangThai = "Đang đang nhập bằng cookie";
+                    SetCookies(taiKhoanModel.Cookie);
+                }
+                else
+                {
+                    taiKhoanModel.TrangThai = "Đang đang nhập bằng tài khoản, mật khẩu.";
+                    DienTaiKhoanMatKhau(taiKhoanModel.TaiKhoan, taiKhoanModel.MatKhau);
+                }
             }
-            else
+            catch(Exception ex)
             {
-                DienTaiKhoanMatKhau(taiKhoanModel.TaiKhoan, taiKhoanModel.MatKhau);
+                string s = ex.Message;
             }
-        Run:
 
-            goto Run;
+                int _countLogin = 0;
+            //while (true)
+            //{
+            //    // Trường hợp phải đăng nhập lại
+            //    if (ElementIsVisible(TenDangNhap) && ElementIsVisible(MatKhau))
+            //    {
+            //        if (_countLogin == 2)
+            //        {
+            //            taiKhoanModel.TrangThai = "Tài khoản mật khẩu không chính xác!!";
+            //            return;
+            //        }
+            //        _countLogin++;
+            //        DienTaiKhoanMatKhau(taiKhoanModel.TaiKhoan, taiKhoanModel.MatKhau);
+            //    }
+            //    // Click Next lưu mật khẩu
+            //    else if (ElementsIsVisible(By.XPath("//div//div//div//a")))
+            //    {
+            //        taiKhoanModel.TrangThai = "Chọn lưu mật khẩu";
+            //        if (ElementIsVisible(LuuMatKhau[0]))
+            //        {
+            //            LuuMatKhau[0].Click();
+            //        }
+            //    }
+            //    else if (ElementIsVisible(ButtonNext)) // Click next xác minh
+            //    {
+            //        ButtonNext.SendKeys(Keys.Enter);
+            //    }
+            //    else if (ElementIsVisible(ButtonNextCheckpoint)) // Countinue
+            //    {
+            //        ButtonNextCheckpoint.SendKeys(Keys.Enter);
+            //    }
+            //}
+            #region 
+
             //if (ElementIsVisible(ButtonNextCheckpoint))
             //{
             //    Thread.Sleep(5);
@@ -171,7 +211,7 @@ namespace GoCheckPoint.Run
             //                        model.TrangThai = "Thành công";
             //                        return;
             //                    }
-                                
+
             //                }
             //            }
             //            else
@@ -192,6 +232,7 @@ namespace GoCheckPoint.Run
             //    model.TrangThai = "Không bị checkpoint";
             //    return;
             //}
+            #endregion
         }
 
         public bool KiemTraCookieDied()
@@ -207,26 +248,15 @@ namespace GoCheckPoint.Run
         {
             if (ElementIsVisible(TenDangNhap) && ElementIsVisible(MatKhau))
             {
-                TenDangNhap.SendKeys(taiKhoan);
-                MatKhau.SendKeys(matKhau);
-                if (ElementIsVisible(DangNhap))
+                if (TenDangNhap.Enabled && TenDangNhap.Displayed)
                 {
-                    Thread.Sleep(100);
-                    DangNhap.Click();
-                    XacMinh();
-                    if (ElementsIsVisible(By.XPath("//div//div//div//a")))
-                    {
-                        if (ElementIsVisible(LuuMatKhau[0]))
-                        {
-                            LuuMatKhau[0].Click();
-                        }
-                    }
-                    XacMinh();
+                    TenDangNhap.SendKeys(taiKhoan);
                 }
-            }
-            else
-            {
-                return;
+                if (MatKhau.Displayed && MatKhau.Enabled)
+                {
+                    MatKhau.SendKeys(matKhau);
+                    MatKhau.SendKeys(Keys.Enter);
+                }
             }
         }
 
