@@ -2,6 +2,7 @@
 using GoCheckPoint.Model;
 using GoCheckPoint.Run;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,7 +26,7 @@ namespace GoCheckPoint
     public partial class Main : Window
     {
         NotifiableCollection<TaiKhoanModel> danhSachTaiKhoan = new NotifiableCollection<TaiKhoanModel>();
-        public IWebDriver driver;
+        public ChromeDriver driver;
 
         public Main()
         {
@@ -45,8 +46,6 @@ namespace GoCheckPoint
             foreach (var item in danhSachTaiKhoan)
             {
                 await Task.Run(()=> { Run(item); });
-                ClearMemory();
-                CloseAllTabChrome();
             }
         }
 
@@ -92,7 +91,7 @@ namespace GoCheckPoint
 
         private void BtnThem_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(txtTenTaiKhoan.Text) || string.IsNullOrEmpty(txtMatKhau.Text))
+            if (string.IsNullOrEmpty(txtTenTaiKhoan.Text) || string.IsNullOrEmpty(txtMatKhau.Password))
             {
                 MessageBox.Show("Tài khoản và mật khẩu bắt buộc phải nhập!!",
                     "Thông báo",MessageBoxButton.OK, MessageBoxImage.Error);
@@ -101,7 +100,7 @@ namespace GoCheckPoint
             danhSachTaiKhoan.Add(new TaiKhoanModel() {
                 STT = danhSachTaiKhoan.Count + 1 + "",
                 TaiKhoan = txtTenTaiKhoan.Text,
-                MatKhau = txtMatKhau.Text,
+                MatKhau = txtMatKhau.Password,
                 Cookie = txtCookie.Text,
                 TrangThai = "Đang đợi..."
             });
@@ -111,7 +110,7 @@ namespace GoCheckPoint
         public void ClearText()
         {
             txtTenTaiKhoan.Text = "";
-            txtMatKhau.Text = "";
+            txtMatKhau.Password = "";
             txtCookie.Text = "";
         }
 
