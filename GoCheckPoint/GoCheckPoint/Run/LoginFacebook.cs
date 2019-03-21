@@ -78,108 +78,120 @@ namespace GoCheckPoint.Run
                 driver.Navigate().GoToUrl("https://m.facebook.com/home.php");
             }
         }
-        public void GoCheckpoint(TaiKhoanModel model)
+        public void GoCheckpoint(TaiKhoanModel taiKhoanModel)
         {
-            if (ElementIsVisible(ButtonNextCheckpoint))
+            if (!string.IsNullOrEmpty(taiKhoanModel.Cookie))
             {
-                Thread.Sleep(10);
-                ButtonNextCheckpoint.Click();
-                if (ElementsIsVisible(By.XPath("//div//fieldset//label//div//div[@class='_4g34']")))
-                {
-                    if (DanhSachKieuCheckpoint.Count > 1)
-                    {
-                        bool flag = false;
-                        foreach (var item in DanhSachKieuCheckpoint)
-                        {
-                            if (ElementIsVisible(item))
-                            {
-                                if (item.Text.Contains("images") || item.Text.Contains("photo") ||
-                                    item.Text.Contains("image") || item.Text.Contains("hình") || item.Text.Contains("photos")) // bổ sung sau
-                                {
-                                    item.Click();
-                                    flag = true;
-                                    break;
-                                }
-                            }
-                        }
-                        if (flag)
-                        {
-                            if (ElementIsVisible(ButtonNextCheckpoint))
-                            {
-                                ButtonNextCheckpoint.Click();
-
-                                if (ElementIsVisible(ButtonNextCheckpoint))
-                                {
-                                    ButtonNextCheckpoint.Click();
-                                }
-                            TraLoiAnh:
-                                // So sánh ảnh //div//div//div//img
-                                Thread.Sleep(5);
-                                if (ElementsIsVisible(By.XPath("//div//fieldset//label//div//div[@class='_4g34']")))
-                                {
-                                    string dapAnTen = "NULLL HAHAHAH";
-                                    if (ElementsIsVisible(By.XPath("//div//div//div//img")))
-                                    {
-                                        foreach (var item in DanhSachAnh) // Danh Sách ảnh hiện tại
-                                        {
-                                            if (ElementIsVisible(item))
-                                            {
-                                                string image = item.GetAttribute("src"); // ảnh hiện tại
-                                            }
-                                        }
-                                    }
-
-                                    bool traLoi = false;
-                                        // danh sách đáp án
-                                    foreach (var item in DanhSachKieuCheckpoint)
-                                    {
-                                        if (ElementIsVisible(item))
-                                        {
-                                            if(item.Text.Equals(dapAnTen))
-                                            {
-                                                item.Click();
-                                                traLoi = true;
-                                                break; ;
-                                            }
-                                        }
-                                    }
-                                    if (!traLoi) {
-                                        DanhSachKieuCheckpoint[DanhSachKieuCheckpoint.Count - 1].Click();// Tôi ko biết
-                                    }
-
-                                    if (ElementIsVisible(ButtonNextCheckpoint))
-                                    {
-                                        ButtonNextCheckpoint.Click();
-                                        goto TraLoiAnh;
-                                    }
-
-                                }
-                                else
-                                {
-                                    model.TrangThai = "Thành công";
-                                    return;
-                                }
-                                
-                            }
-                        }
-                        else
-                        {
-                            model.TrangThai = "Không có kiểu checkpoint hình ảnh";
-                            return;
-                        }
-                    }
-                }
-                else
-                {
-                    model.TrangThai = "Không tìm loại lựa chọn kiểu checkpoint";
-                    return;
-                }
+                taiKhoanModel.TrangThai = "Đang đang nhập bằng cookie";
+                SetCookies(taiKhoanModel.Cookie);
             }
             else
             {
-                model.TrangThai = "Không bị checkpoint";
-                return;
+                DienTaiKhoanMatKhau(taiKhoanModel.TaiKhoan, taiKhoanModel.MatKhau);
             }
+        Run:
+
+            goto Run;
+            //if (ElementIsVisible(ButtonNextCheckpoint))
+            //{
+            //    Thread.Sleep(5);
+            //    ButtonNextCheckpoint.Click();
+            //    if (ElementsIsVisible(By.XPath("//div//fieldset//label//div//div[@class='_4g34']")))
+            //    {
+            //        if (DanhSachKieuCheckpoint.Count > 1)
+            //        {
+            //            bool flag = false;
+            //            foreach (var item in DanhSachKieuCheckpoint)
+            //            {
+            //                if (ElementIsVisible(item))
+            //                {
+            //                    if (item.Text.Contains("images") || item.Text.Contains("photo") ||
+            //                        item.Text.Contains("image") || item.Text.Contains("hình") || item.Text.Contains("photos")) // bổ sung sau
+            //                    {
+            //                        item.Click();
+            //                        flag = true;
+            //                        break;
+            //                    }
+            //                }
+            //            }
+            //            if (flag)
+            //            {
+            //                if (ElementIsVisible(ButtonNextCheckpoint))
+            //                {
+            //                    ButtonNextCheckpoint.Click();
+
+            //                    if (ElementIsVisible(ButtonNextCheckpoint))
+            //                    {
+            //                        ButtonNextCheckpoint.Click();
+            //                    }
+            //                TraLoiAnh:
+            //                    // So sánh ảnh //div//div//div//img
+            //                    Thread.Sleep(5);
+            //                    if (ElementsIsVisible(By.XPath("//div//fieldset//label//div//div[@class='_4g34']")))
+            //                    {
+            //                        string dapAnTen = "NULLL HAHAHAH";
+            //                        if (ElementsIsVisible(By.XPath("//div//div//div//img")))
+            //                        {
+            //                            foreach (var item in DanhSachAnh) // Danh Sách ảnh hiện tại
+            //                            {
+            //                                if (ElementIsVisible(item))
+            //                                {
+            //                                    string image = item.GetAttribute("src"); // ảnh hiện tại
+            //                                }
+            //                            }
+            //                        }
+
+            //                        bool traLoi = false;
+            //                            // danh sách đáp án
+            //                        foreach (var item in DanhSachKieuCheckpoint)
+            //                        {
+            //                            if (ElementIsVisible(item))
+            //                            {
+            //                                if(item.Text.Equals(dapAnTen))
+            //                                {
+            //                                    item.Click();
+            //                                    traLoi = true;
+            //                                    break; ;
+            //                                }
+            //                            }
+            //                        }
+            //                        if (!traLoi) {
+            //                            DanhSachKieuCheckpoint[DanhSachKieuCheckpoint.Count - 1].Click();// Tôi ko biết
+            //                        }
+
+            //                        if (ElementIsVisible(ButtonNextCheckpoint))
+            //                        {
+            //                            ButtonNextCheckpoint.Click();
+            //                            goto TraLoiAnh;
+            //                        }
+
+            //                    }
+            //                    else
+            //                    {
+            //                        model.TrangThai = "Thành công";
+            //                        return;
+            //                    }
+                                
+            //                }
+            //            }
+            //            else
+            //            {
+            //                model.TrangThai = "Không có kiểu checkpoint hình ảnh";
+            //                return;
+            //            }
+            //        }
+            //    }
+            //    else
+            //    {
+            //        model.TrangThai = "Không tìm loại lựa chọn kiểu checkpoint";
+            //        return;
+            //    }
+            //}
+            //else
+            //{
+            //    model.TrangThai = "Không bị checkpoint";
+            //    return;
+            //}
         }
 
         public bool KiemTraCookieDied()

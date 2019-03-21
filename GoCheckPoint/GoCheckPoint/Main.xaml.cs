@@ -51,40 +51,41 @@ namespace GoCheckPoint
         public void Run(TaiKhoanModel taiKhoanModel)
         {
             LoginFacebook loginFacebook = new LoginFacebook(driver);
-            // Nếu có nhập cookie
-            if(!string.IsNullOrEmpty(taiKhoanModel.Cookie))
-            {
-                // Đăng nhập cookie
-                taiKhoanModel.TrangThai = "Đang đang nhập bằng cookie";
-                loginFacebook.SetCookies(taiKhoanModel.Cookie);
-                if (loginFacebook.KiemTraCookieDied())
-                {
-                    taiKhoanModel.TrangThai = "Cookie died!! Đang nhập bằng tài khoản";
-                    // Nếu cookie died!
-                    loginFacebook.DienTaiKhoanMatKhau(taiKhoanModel.TaiKhoan, taiKhoanModel.MatKhau);
-                }
-                else
-                {
-                    taiKhoanModel.TrangThai = "Xác minh!!";
-                    // Đề phòng xác minh
-                    loginFacebook.XacMinh();
-                }
-            }
-            else
-            {
-                taiKhoanModel.TrangThai = "Đang đang nhập bằng tài khoản, mật khẩu";
-                // Nếu ko nhập cookie
-                loginFacebook.DienTaiKhoanMatKhau(taiKhoanModel.TaiKhoan, taiKhoanModel.MatKhau);
-            }
-            if (loginFacebook.KiemTraCookieDied())
-            {
-                //Kiểm tra nếu vẫn còn ở đăng nhập.
-                taiKhoanModel.TrangThai = "Tài khoản mật khẩu không chính xác!!";
-                return;
-            }
-            taiKhoanModel.TrangThai = "Đang gỡ checkpoint";
-            // Bắt đầu kiểm tra gỡ checkpoitn
             loginFacebook.GoCheckpoint(taiKhoanModel);
+            // Nếu có nhập cookie
+            //if(!string.IsNullOrEmpty(taiKhoanModel.Cookie))
+            //{
+            //    // Đăng nhập cookie
+            //    taiKhoanModel.TrangThai = "Đang đang nhập bằng cookie";
+            //    loginFacebook.SetCookies(taiKhoanModel.Cookie);
+            //    if (loginFacebook.KiemTraCookieDied())
+            //    {
+            //        taiKhoanModel.TrangThai = "Cookie died!! Đang nhập bằng tài khoản";
+            //        // Nếu cookie died!
+            //        loginFacebook.DienTaiKhoanMatKhau(taiKhoanModel.TaiKhoan, taiKhoanModel.MatKhau);
+            //    }
+            //    else
+            //    {
+            //        taiKhoanModel.TrangThai = "Xác minh!!";
+            //        // Đề phòng xác minh
+            //        loginFacebook.XacMinh();
+            //    }
+            //}
+            //else
+            //{
+            //    taiKhoanModel.TrangThai = "Đang đang nhập bằng tài khoản, mật khẩu";
+            //    // Nếu ko nhập cookie
+            //    loginFacebook.DienTaiKhoanMatKhau(taiKhoanModel.TaiKhoan, taiKhoanModel.MatKhau);
+            //}
+            //if (loginFacebook.KiemTraCookieDied())
+            //{
+            //    //Kiểm tra nếu vẫn còn ở đăng nhập.
+            //    taiKhoanModel.TrangThai = "Tài khoản mật khẩu không chính xác!!";
+            //    return;
+            //}
+            //taiKhoanModel.TrangThai = "Đang gỡ checkpoint";
+            //// Bắt đầu kiểm tra gỡ checkpoitn
+            //loginFacebook.GoCheckpoint(taiKhoanModel);
         }
 
         private void BtnThem_Click(object sender, RoutedEventArgs e)
