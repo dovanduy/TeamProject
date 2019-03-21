@@ -71,6 +71,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\Friend.cs" />
     <Compile Include="Run\LoginFacebook.cs" />
     <Page Include="Main.xaml">
       <SubType>Designer</SubType>

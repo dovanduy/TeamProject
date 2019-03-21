@@ -172,6 +172,7 @@ namespace GoCheckPoint.Run
                 else
                 {
                     model.TrangThai = "Không tìm loại lựa chọn kiểu checkpoint";
+                    return;
                 }
             }
             else
