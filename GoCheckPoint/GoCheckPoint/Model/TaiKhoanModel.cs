@@ -22,6 +22,19 @@ namespace GoCheckPoint.Model
                 }
             }
         }
+        private string _uid;
+        public string UID
+        {
+            get { return _uid; }
+            set
+            {
+                if (_uid != value)
+                {
+                    _uid = value;
+                    RaisePropertyChanged("UID");
+                }
+            }
+        }
 
         private string _taiKhoan;
         public string TaiKhoan

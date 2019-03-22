@@ -24,16 +24,16 @@ namespace GoCheckPoint.Handle
         #region xử lý
         private List<List<bool>> MangPixel;
 
-        public double SoSanh(string ImgCp, string ImgAlbum)
+        public double SoSanh(Bitmap Imgcp, Bitmap ImgAl)
         {
             double num5 = 0;
             //lấy ảnh checkpoit
-            Bitmap Imgcp = GetImage(ImgCp);
+            //Bitmap Imgcp = GetImage(ImgCp);
             int widthCp = Imgcp.Size.Width;
             int heightCp = Imgcp.Size.Height;
 
             //lấy ảnh từ album bạn bè cần so
-            Bitmap ImgAl = GetImage(ImgAlbum);
+            //Bitmap ImgAl = GetImage(ImgAlbum);
             //đưa ảnh cần so về đúng kích thước của ảnh checkpoit lệch size bỏ qua
             Dictionary<string, int> Resize = new Dictionary<string, int>();
             Resize = ResizeByWidth(ImgAl, widthCp);

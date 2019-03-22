@@ -91,7 +91,7 @@ namespace GoCheckPoint
 
         private void BtnThem_Click(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrEmpty(txtTenTaiKhoan.Text) || string.IsNullOrEmpty(txtMatKhau.Password))
+            if (string.IsNullOrEmpty(txtTenTaiKhoan.Text) || string.IsNullOrEmpty(txtMatKhau.Password) || string.IsNullOrEmpty(txtUID.Text))
             {
                 MessageBox.Show("Tài khoản và mật khẩu bắt buộc phải nhập!!",
                     "Thông báo",MessageBoxButton.OK, MessageBoxImage.Error);
@@ -102,7 +102,8 @@ namespace GoCheckPoint
                 TaiKhoan = txtTenTaiKhoan.Text,
                 MatKhau = txtMatKhau.Password,
                 Cookie = txtCookie.Text,
-                TrangThai = "Đang đợi..."
+                TrangThai = "Đang đợi...",
+                UID = txtUID.Text
             });
             ClearText();
         }
@@ -112,6 +113,7 @@ namespace GoCheckPoint
             txtTenTaiKhoan.Text = "";
             txtMatKhau.Password = "";
             txtCookie.Text = "";
+            txtUID.Text = "";
         }
 
         public void CloseAllTabChrome()

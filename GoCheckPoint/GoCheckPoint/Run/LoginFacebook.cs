@@ -1,4 +1,5 @@
-﻿using GoCheckPoint.Model;
+﻿using GoCheckPoint.Handle;
+using GoCheckPoint.Model;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.PageObjects;
@@ -7,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -272,6 +275,7 @@ namespace GoCheckPoint.Run
                 taiKhoanModel.TrangThai = "Đang gỡ checkpoint hình ảnh";
                 
                 // -----------------
+                Loop:
                 var checkPoint = GetCheckPoint();
                 if (checkPoint == null)
                 {
@@ -280,16 +284,68 @@ namespace GoCheckPoint.Run
                 }
                 else
                 {
+                    #region
                     if (checkPoint.Count > 0)
                     {
-                        Console.Write("");
+                        string friendInImage = "";
+                        foreach (var itemC in checkPoint)
+                        {
+                            foreach (var item in danhSachBanDang)
+                            {
+                                foreach (var itemCheckpoint in item)
+                                {
+                                    if (itemCheckpoint.ImageCheckpoint == null)
+                                    {
+                                        itemCheckpoint.ImageCheckpoint =
+                                            SoSanhAnh.getInstance.GetImage(itemCheckpoint.Image);
+
+                                    }
+                                    if (itemCheckpoint.ImageCheckpoint != null)
+                                    {
+                                        if (SoSanhAnh.getInstance.SoSanh(itemC, itemCheckpoint.ImageCheckpoint) > 50)
+                                        {
+                                            friendInImage = itemCheckpoint.Name;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if (!string.IsNullOrEmpty(friendInImage))
+                                {
+                                    break;
+                                }
+                            }
+                            if (!string.IsNullOrEmpty(friendInImage))
+                            {
+                                break;
+                            }
+                        }
+                        if (string.IsNullOrEmpty(friendInImage))
+                        {
+                            chonRandom();
+                        }
+                        else
+                        {
+                            if (chonName(friendInImage))
+                            {
+                                taiKhoanModel.TrangThai = "Chọn thành công";
+                            }
+                            else
+                            {
+                                taiKhoanModel.TrangThai = "Không tìm thấy bạn bè";
+                                clickToiKhongBiet();
+                            }
+                        }
                     }
                     else
                     {
                         taiKhoanModel.TrangThai = "Không thể lấy hình ảnh";
                         return;
                     }
+                    goto Loop;
+                    #endregion
                 }
+                // Đổi mật khẩu
+
                 // ----------------------------
             }
             #region Who is the best??
@@ -472,6 +528,52 @@ namespace GoCheckPoint.Run
             //    return;
             //}
             #endregion
+        }
+        public bool chonName(string name)
+        {
+            bool flag;
+            try
+            {
+                driver.FindElementByXPath("//fieldset").FindElement(By.XPath(string.Concat("//span[. = '", name.Trim(), "']"))).Click();
+                ((IJavaScriptExecutor)driver).ExecuteScript("document.getElementById('checkpointSubmitButton-actual-button').scrollIntoView(true)", new object[0]);
+                driver.FindElementById("checkpointSubmitButton-actual-button").Click();
+                this.WaitForJqueryAjax();
+                flag = true;
+            }
+            catch
+            {
+                flag = false;
+            }
+            return flag;
+        }
+        public Bitmap Resize(Bitmap old, int newW, int newH)
+        {
+            Bitmap bitmap;
+            try
+            {
+                Rectangle rectangle = new Rectangle(0, 0, newW, newH);
+                Bitmap bitmap1 = new Bitmap(newW, newH);
+                bitmap1.SetResolution(old.HorizontalResolution, old.VerticalResolution);
+                using (Graphics graphic = Graphics.FromImage(bitmap1))
+                {
+                    graphic.CompositingMode = CompositingMode.SourceCopy;
+                    graphic.CompositingQuality = CompositingQuality.HighQuality;
+                    graphic.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    graphic.SmoothingMode = SmoothingMode.HighQuality;
+                    graphic.PixelOffsetMode = PixelOffsetMode.HighQuality;
+                    using (ImageAttributes imageAttribute = new ImageAttributes())
+                    {
+                        imageAttribute.SetWrapMode(WrapMode.TileFlipXY);
+                        graphic.DrawImage(old, rectangle, 0, 0, old.Width, old.Height, GraphicsUnit.Pixel, imageAttribute);
+                    }
+                }
+                bitmap = bitmap1;
+            }
+            catch
+            {
+                bitmap = null;
+            }
+            return bitmap;
         }
         public bool KiemTraCookieDied()
         {

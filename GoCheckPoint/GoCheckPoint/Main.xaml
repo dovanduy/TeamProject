@@ -10,7 +10,7 @@
         Title="Gỡ Checkpoint" Height="600" Width="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="2*"></RowDefinition>
+            <RowDefinition Height="2.5*"></RowDefinition>
             <RowDefinition Height="5*"></RowDefinition>
             <RowDefinition Height="0.5*"></RowDefinition>
         </Grid.RowDefinitions>
@@ -26,12 +26,18 @@
                     <Grid.RowDefinitions>
                         <RowDefinition></RowDefinition>
                         <RowDefinition></RowDefinition>
+                        <RowDefinition></RowDefinition>
+
                     </Grid.RowDefinitions>
-                    <StackPanel Orientation="Vertical">
+                    <StackPanel Grid.Row="0" Orientation="Vertical">
+                        <TextBlock FontSize="13" Text="UID"></TextBlock>
+                        <TextBox Height="30" Name="txtUID"></TextBox>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Orientation="Vertical">
                         <TextBlock FontSize="13" Text="Tên tài khoản"></TextBlock>
                         <TextBox  FontSize="13" Height="30" Name="txtTenTaiKhoan"></TextBox>
                     </StackPanel>
-                    <StackPanel Grid.Row="1" Orientation="Vertical">
+                    <StackPanel Grid.Row="2" Orientation="Vertical">
                         <TextBlock FontSize="13" Text="Mật khẩu"></TextBlock>
                         <PasswordBox Height="30" Name="txtMatKhau"></PasswordBox>
                     </StackPanel>
@@ -98,6 +104,32 @@
                             <DataTemplate>
                                 <TextBlock 
                                 Text="STT">
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>   
+                    <!--UID-->
+                    <DataGridTemplateColumn     
+                    CanUserSort="True"
+                    Width="0.6*">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock       
+                                IsHitTestVisible="False"
+                                Text="{Binding UID}"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Padding="5 7.5 5 7.5"
+                                Height="30"
+                                Foreground="Black"
+                                TextTrimming="WordEllipsis">
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock 
+                                Text="UID">
                                 </TextBlock>
                             </DataTemplate>
                         </DataGridTemplateColumn.HeaderTemplate>
