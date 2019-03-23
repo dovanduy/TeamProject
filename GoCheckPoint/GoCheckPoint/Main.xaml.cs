@@ -6,6 +6,7 @@ using OpenQA.Selenium.Chrome;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,7 +46,10 @@ namespace GoCheckPoint
         {
             foreach (var item in danhSachTaiKhoan)
             {
+                item.TrangThai = "Đang đăng nhập";
                 await Task.Run(()=> { Run(item); });
+                ClearMemory();
+                CloseAllTabChrome();
             }
         }
 
@@ -91,13 +95,17 @@ namespace GoCheckPoint
 
         private void BtnThem_Click(object sender, RoutedEventArgs e)
         {
+            //double soSanh =  Handle.SoSanhAnh.getInstance.SoSanh(
+            //    Handle.SoSanhAnh.getInstance.GetImage("https://scontent.xx.fbcdn.net/v/t1.0-0/q83/p75x225/12417824_10153781403843605_853243620985875767_n.jpg?_nc_cat=110&_nc_ht=scontent.xx&oh=6affed873bd1ac072c1a4375cf3d8403&oe=5D229656"),
+            //    Handle.SoSanhAnh.getInstance.GetImage("https://scontent.xx.fbcdn.net/v/t1.0-0/p75x225/1935914_106858108886_2602058_n.jpg?_nc_cat=100&_nc_ht=scontent.xx&oh=ad926dabc5c7288d44535be309aec224&oe=5D204085"));
             if (string.IsNullOrEmpty(txtTenTaiKhoan.Text) || string.IsNullOrEmpty(txtMatKhau.Password) || string.IsNullOrEmpty(txtUID.Text))
             {
                 MessageBox.Show("Tài khoản và mật khẩu bắt buộc phải nhập!!",
-                    "Thông báo",MessageBoxButton.OK, MessageBoxImage.Error);
+                    "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
-            danhSachTaiKhoan.Add(new TaiKhoanModel() {
+            danhSachTaiKhoan.Add(new TaiKhoanModel()
+            {
                 STT = danhSachTaiKhoan.Count + 1 + "",
                 TaiKhoan = txtTenTaiKhoan.Text,
                 MatKhau = txtMatKhau.Password,

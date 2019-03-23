@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -20,8 +21,13 @@ namespace GoCheckPoint.Run
 {
     public class LoginFacebook
     {
+        public static string PATH_FOLDER =
+            System.IO.Path.GetDirectoryName(System.Reflection.Assembly
+                .GetExecutingAssembly().Location) + "\\DataBackup";
+
         public ChromeDriver driver { get; set; }
         public WebDriverWait waiter { get; set; }
+        public List<Friend> danhSachBanRoot = new List<Friend>();
         public List<List<Friend>> danhSachBanDang = new List<List<Friend>>();
         [FindsBy(How = How.XPath, Using = "//input[@name='email']")]
         public IWebElement TenDangNhap { get; set; }
@@ -39,7 +45,42 @@ namespace GoCheckPoint.Run
         public IList<IWebElement> DanhSachAnh { get; set; }
         [FindsBy(How = How.XPath, Using = "//button[@type='submit'][@value='Continue']")]
         public IWebElement ButtonNextCheckpoint{ get; set; }
-        public List<Bitmap> GetCheckPoint()
+
+        public List<Friend> DocDanhSachTuFile(string path)
+        {
+            try
+            {
+                List<Friend> ds = new List<Friend>();
+                var list = File.ReadAllLines(path);
+
+                foreach (var item in list)
+                {
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(item))
+                        {
+                            string[] arr = item.Split('*');
+                            ds.Add(new Friend()
+                            {
+                                UID = arr[0],
+                                Name = arr[1],
+                                Image = arr[2].Split('|')[0],
+                                ImageCheckpoint = null
+                            });
+                        }
+                    }
+                    catch
+                    { }
+                }
+                return ds;
+            }
+            catch
+            {
+                return new List<Friend>();
+            }
+        }
+
+        public List<Bitmap> GetCheckPoint(string uid)
         {
             danhSachBanDang.Clear();
             List<Bitmap> bitmaps= new List<Bitmap>();
@@ -96,8 +137,8 @@ namespace GoCheckPoint.Run
                     ReadOnlyCollection<IWebElement> webElements1 = driver.FindElementsByTagName("label");
                     for (int j = 0; j < webElements1.Count; j++)
                     {
-                        List<Friend> dsTemp = new List<Friend>();
                         string name = webElements1[j].Text;
+                        List<Friend> dsTemp = danhSachBanRoot.Where(model => model.Name.Equals(name)).ToList();
                         //this.names.Add(); // Lấy ra tên
                         danhSachBanDang.Add(dsTemp);
                     }
@@ -203,21 +244,24 @@ namespace GoCheckPoint.Run
             }
             return flag;
         }
-        public string loginFB(string username, string password,string cookie)
+        public string loginFB(TaiKhoanModel taiKhoan)
         {
             try
             {
-                if (string.IsNullOrEmpty(cookie))
+                if (string.IsNullOrEmpty(taiKhoan.Cookie))
                 {
+                    taiKhoan.TrangThai = "Đang đăng nhập bằng tài khoản";
                     driver.Navigate().GoToUrl("https://m.facebook.com/");
-                    driver.FindElementById("m_login_email").SendKeys(username);
-                    driver.FindElementById("m_login_password").SendKeys(password);
+                    driver.FindElementById("m_login_email").SendKeys(taiKhoan.TaiKhoan);
+                    driver.FindElementById("m_login_password").SendKeys(taiKhoan.MatKhau);
                     driver.FindElementByName("login").Click();
                 }
                 else
                 {
-                    SetCookies(cookie);
+                    taiKhoan.TrangThai = "Đang đăng nhập bằng cookie";
+                    SetCookies(taiKhoan.Cookie);
                 }
+
                 try
                 {
                     waiter.Until<bool>((IWebDriver _driver) => _driver.FindElements(By.Id("checkpointSubmitButton-actual-button")).Count > 0);
@@ -264,7 +308,9 @@ namespace GoCheckPoint.Run
 
         public void GoCheckpoint(TaiKhoanModel taiKhoanModel)
         {
-            string login = loginFB(taiKhoanModel.TaiKhoan, taiKhoanModel.MatKhau, taiKhoanModel.Cookie);
+            danhSachBanRoot = DocDanhSachTuFile(PATH_FOLDER + "\\" + taiKhoanModel.UID + ".txt");
+            string login = loginFB(taiKhoanModel);
+            taiKhoanModel.TrangThai = login;
             if (!login.Equals("Đang gỡ checkpoint hình ảnh"))
             {
                 taiKhoanModel.TrangThai = "Không có kiểu checkpoint hình ảnh";
@@ -273,10 +319,11 @@ namespace GoCheckPoint.Run
             else
             {
                 taiKhoanModel.TrangThai = "Đang gỡ checkpoint hình ảnh";
-                
+                int result = 0;
+                int chonBua = 0;
                 // -----------------
                 Loop:
-                var checkPoint = GetCheckPoint();
+                var checkPoint = GetCheckPoint(taiKhoanModel.UID);
                 if (checkPoint == null)
                 {
                     taiKhoanModel.TrangThai = "Không thể lấy hình ảnh";
@@ -298,11 +345,10 @@ namespace GoCheckPoint.Run
                                     {
                                         itemCheckpoint.ImageCheckpoint =
                                             SoSanhAnh.getInstance.GetImage(itemCheckpoint.Image);
-
                                     }
                                     if (itemCheckpoint.ImageCheckpoint != null)
                                     {
-                                        if (SoSanhAnh.getInstance.SoSanh(itemC, itemCheckpoint.ImageCheckpoint) > 50)
+                                        if (SoSanhAnh.getInstance.SoSanh(itemC, itemCheckpoint.ImageCheckpoint) > 80)
                                         {
                                             friendInImage = itemCheckpoint.Name;
                                             break;
@@ -321,24 +367,27 @@ namespace GoCheckPoint.Run
                         }
                         if (string.IsNullOrEmpty(friendInImage))
                         {
+                            chonBua++;
+                            taiKhoanModel.TrangThai = "Chọn bừa: " + chonBua + "| Chọn đúng: " + result;
                             chonRandom();
                         }
                         else
                         {
                             if (chonName(friendInImage))
                             {
-                                taiKhoanModel.TrangThai = "Chọn thành công";
+                                result++;
+                                taiKhoanModel.TrangThai = "Chọn bừa: " + chonBua + "| Chọn đúng: " + result;
                             }
                             else
                             {
-                                taiKhoanModel.TrangThai = "Không tìm thấy bạn bè";
+                                taiKhoanModel.TrangThai = "Không tìm thấy bạn bè hoặc đã xong";
                                 clickToiKhongBiet();
                             }
                         }
                     }
                     else
                     {
-                        taiKhoanModel.TrangThai = "Không thể lấy hình ảnh";
+                        taiKhoanModel.TrangThai = "Không thể lấy hình ảnh hoặc đã chọn xong";
                         return;
                     }
                     goto Loop;
