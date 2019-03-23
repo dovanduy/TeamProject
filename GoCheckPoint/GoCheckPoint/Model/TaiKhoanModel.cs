@@ -9,6 +9,7 @@ namespace GoCheckPoint.Model
 {
     public class TaiKhoanModel : BindableBase
     {
+        public bool IsRun { get; set; }
         private string _stt;
         public string STT
         {
