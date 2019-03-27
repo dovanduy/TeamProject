@@ -52,6 +52,7 @@ namespace Bussiness
         /// </summary>
         [FindsBy(How = How.XPath, Using = "")]
         public IWebElement NextSubmit { get; set; } // Loop 3
+        LibrarySelenium library = null;
         public GetEmail(IWebDriver dri)
         {
             ChromeDriverService chromeDriverService = ChromeDriverService.CreateDefaultService(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location));
@@ -66,7 +67,8 @@ namespace Bussiness
             dri.Navigate().GoToUrl("https://m.facebook.com/login.php");
             dri.Manage().Window.Size = new System.Drawing.Size(300, 600);
             this.driver = dri;
-            waiter = new WebDriverWait(driver, TimeSpan.FromSeconds(7));
+            waiter = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
+            library = new LibrarySelenium(driver, waiter);
             PageFactory.InitElements(this.driver,this);
 
         }
@@ -94,72 +96,79 @@ namespace Bussiness
         {
             try
             {
-            Start:
-                if (ElementIsVisible(Menu))
+                if (library.IsLoadingComplete() &&
+                    library.IsAjaxLoaded(driver))
                 {
-
-                    Menu.Click();
-                    if (ElementIsVisible(Setting))
+                ClickButtonNext:
+                    if (library.ElementIsVisible(ButtonNext))
                     {
-                        try
+                        ButtonNext.Click();
+                        goto ClickButtonNext;
+                    }
+                    else if (library.ElementIsVisible(Menu))
+                    {
+                        library.ScrollToElement(Menu);
+                        Menu.Click();
+                        if (library.IsLoadingComplete() && library.IsAjaxLoaded())
                         {
-                            Setting.Click();
-                        }
-                        catch
-                        {
-                            Email = "Đizz con mẹ Indonesia";
-                            return false;
-                        }
-                        if (ElementsIsVisible(By.XPath("//div[@class='_5r7k _5r7m']")))
-                        {
-                            Profile[0].Click();
-                            if (ElementsIsVisible(By.XPath("//div//div//h3//span//span")))
+                            if (library.ElementIsVisible(Setting))
                             {
-                                Email = MailInfo[0].Text;
-                                return true;
+                                try
+                                {
+                                    library.ScrollToElement(Setting);
+                                    Setting.Click();
+                                }
+                                catch
+                                {
+                                    Email = "Đizz con mẹ Indonesia";
+                                    return false;
+                                }
+                                if (library.IsLoadingComplete() && library.IsAjaxLoaded() && library.ElementsIsVisible(By.XPath("//div[@class='_5r7k _5r7m']")))
+                                {
+                                    library.ScrollToElement(Profile[0]);
+                                    Profile[0].Click();
+                                    if (library.IsLoadingComplete() && library.IsAjaxLoaded() && library.ElementsIsVisible(By.XPath("//div//div//h3//span//span")))
+                                    {
+                                        Email = MailInfo[0].Text;
+                                        return true;
+                                    }
+                                    else
+                                    {
+                                        Email = "Không tìm thấy Email";
+                                        driver.Close();
+                                        return false;
+                                        // 
+                                    }
+                                }
+                                else
+                                {
+                                    Email = "Không tìm thấy Profile";
+                                    driver.Close();
+                                    return false;
+                                    // Không tìm thấy Profile
+                                }
                             }
                             else
                             {
-                                Email = "Không tìm thấy Email";
+                                Email = "Không tìm thấy Setting";
                                 driver.Close();
                                 return false;
-                                // 
+                                // Không tìm thấy Setting
                             }
-                        }
-                        else
-                        {
-                            Email = "Không tìm thấy Profile";
-                            driver.Close();
-                            return false;
-                            // Không tìm thấy Profile
                         }
                     }
                     else
                     {
-                        Email = "Không tìm thấy Setting";
+                        Email = "Cookie died!";
                         driver.Close();
                         return false;
-                        // Không tìm thấy Setting
                     }
                 }
-                else if (ElementIsVisible(ButtonNext))
-                {
-                    if (ElementIsVisible(ButtonNext))
-                    {
-                        ButtonNext.Click();
-                    }
-                    //Xác minh
-                    goto Start; // Quay lại kiểm tra MENU
-                }
-                else
-                {
-                    Email = "Cookie died!";
-                    driver.Close();
-                    return false;
-                }
+                return true;
             }
-            catch
+            catch (Exception ex)
             {
+                Email = ex.Message;
                 driver.Close();
                 return false;
             }
@@ -178,7 +187,7 @@ namespace Bussiness
         public void TaoBussiness(string mail)
         {
             driver.Navigate().GoToUrl("https://business.facebook.com/");
-            if (ElementIsVisible(ButtonTaoTaiKhoan))
+            if (library.IsAjaxLoaded() && library.IsLoadingComplete() && library.ElementIsVisible(ButtonTaoTaiKhoan))
             {
                 try
                 {
@@ -190,43 +199,51 @@ namespace Bussiness
                     driver.Close();
                     return;
                 }
-                if (ElementsIsVisible(By.XPath("//input[@class='_4b7k _4b7k_big _53rs']")))
+                if (library.ElementsIsVisible(By.XPath("//input[@class='_4b7k _4b7k_big _53rs']")))
                 {
                     CompanyInfo[0].SendKeys(CompanyInfo[1].GetAttribute("value").ToString());
                     CompanyInfo[2].SendKeys(mail);
-                    if (ElementIsVisible(ButtonContinue))
+                    if (library.ElementIsVisible(ButtonContinue))
                     {
                         ButtonContinue.Click();
-                        if (ElementsIsVisible(By.XPath("//input[@class='_4b7k _4b7k_big _53rs']")))
+                        if (library.ElementsIsVisible(By.XPath("//input[@class='_4b7k _4b7k_big _53rs']")))
                         {
-                            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(15);
                             // Input form
                             Thread.Sleep(3000);
-                            foreach (var ipForm in CompanyForm)
+                            if (library.IsLoadingComplete() && library.IsAjaxLoaded())
                             {
-                                if (ElementIsVisible(ipForm))
+                                foreach (var ipForm in CompanyForm)
                                 {
-                                    ipForm.SendKeys(RandomString(20));
-                                }
-                            }
-                            CompanyForm[5].SendKeys(Keys.Control +"a" );
-                            CompanyForm[5].SendKeys("0385102879");
-                            CompanyForm[6].SendKeys(Keys.Control + "a");
-                            CompanyForm[6].SendKeys("https://www.24h.com.vn/");
-                            if (ElementIsVisible(ButtomCombobox))
-                            {
-                                ButtomCombobox.Click();
-
-                                if (ElementIsVisible(CountryText))
-                                {
-                                    Thread.Sleep(1500);
-                                    CountryText.SendKeys("Vi");
-                                    Thread.Sleep(1200);
-                                    if (ElementsIsVisible(By.XPath("//div//div//div//div//div//div//span//div//div//div//div//div//div")))
+                                    if (library.ElementIsVisible(ipForm))
                                     {
-                                        if (ElementIsVisible(ListCountry[0]))
+                                        ipForm.SendKeys(RandomString(20));
+                                    }
+                                }
+                                CompanyForm[5].SendKeys(Keys.Control + "a");
+                                CompanyForm[5].SendKeys("0385102879");
+                                CompanyForm[6].SendKeys(Keys.Control + "a");
+                                CompanyForm[6].SendKeys("https://www.24h.com.vn/");
+                                if (library.ElementIsVisible(ButtomCombobox))
+                                {
+                                    ButtomCombobox.Click();
+
+                                    if (library.ElementIsVisible(CountryText))
+                                    {
+                                        Thread.Sleep(1500);
+                                        CountryText.SendKeys("Vi");
+                                        Thread.Sleep(1200);
+                                        if (library.ElementsIsVisible(By.XPath("//div//div//div//div//div//div//span//div//div//div//div//div//div")))
                                         {
-                                            ListCountry[0].Click();
+                                            if (library.ElementIsVisible(ListCountry[0]))
+                                            {
+                                                ListCountry[0].Click();
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Email = "Chọn quốc gia thất bại";
+                                            driver.Close();
+                                            return;
                                         }
                                     }
                                     else
@@ -235,6 +252,7 @@ namespace Bussiness
                                         driver.Close();
                                         return;
                                     }
+
                                 }
                                 else
                                 {
@@ -242,32 +260,28 @@ namespace Bussiness
                                     driver.Close();
                                     return;
                                 }
-                            }
-                            else
-                            {
-                                Email = "Chọn quốc gia thất bại";
-                                driver.Close();
-                                return;
-                            }
-                            if (ElementsIsVisible(By.XPath("//div//span//div//div//button")))
-                            {
-                                if (ElementIsVisible(ButtonSubmit[1]))
+                                if (library.ElementsIsVisible(By.XPath("//div//span//div//div//button")))
                                 {
-                                    ButtonSubmit[1].Click();
-                                    Thread.Sleep(1000);
-                                    if (ElementIsVisible(ButtonFinish))
+                                    if (library.ElementIsVisible(ButtonSubmit[1]))
                                     {
-                                        ButtonFinish.Click();
+                                        ButtonSubmit[1].Click();
+                                        if (library.IsAjaxLoaded() && library.IsLoadingComplete())
+                                        {
+                                            if (library.ElementIsVisible(ButtonFinish))
+                                            {
+                                                ButtonFinish.Click();
+                                            }
+                                            Email = "Thành công!!";
+                                            driver.Close();
+                                            return;
+                                        }
                                     }
-                                    Email = "Thành công!!";
-                                    driver.Close();
-                                    return;
-                                }
-                                else
-                                {
-                                    Email = "Gửi submit thất bại!!";
-                                    driver.Close();
-                                    return;
+                                    else
+                                    {
+                                        Email = "Gửi submit thất bại!!";
+                                        driver.Close();
+                                        return;
+                                    }
                                 }
                             }
                         }
@@ -291,44 +305,6 @@ namespace Bussiness
                 Email = "Tài khoản đã được tạo";
                 driver.Close();
                 return;
-            }
-        }
-
-        /// <summary>
-        /// return true if element is visible
-        /// </summary>
-        /// <returns></returns>
-        public bool ElementIsVisible(IWebElement element)
-        {
-            try
-            {
-                //innerexception
-                var ignoredExceptions = new List<Type>() { typeof(StaleElementReferenceException) };
-                waiter.IgnoreExceptionTypes(ignoredExceptions.ToArray());
-                waiter.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(element));
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-        /// <summary>
-        /// return true if element is visible
-        /// </summary>
-        /// <returns></returns>
-        public bool ElementsIsVisible(By element)
-        {
-            try
-            {
-                var ignoredExceptions = new List<Type>() { typeof(StaleElementReferenceException) };
-                waiter.IgnoreExceptionTypes(ignoredExceptions.ToArray());
-                waiter.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(element));
-                return true;
-            }
-            catch
-            {
-                return false;
             }
         }
 
