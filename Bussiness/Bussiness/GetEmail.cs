@@ -26,27 +26,29 @@ namespace Bussiness
         [FindsBy(How = How.XPath, Using = "//div//div//div//div//div//span//input")]
         public IWebElement CountryText { get; set; }
         [FindsBy(How = How.XPath, Using = "//div[@class='_5r7k _5r7m']")]
-        public IList<IWebElement> Profile { get; set; }
+        public ReadOnlyCollection<IWebElement> Profile { get; set; }
         [FindsBy(How = How.XPath, Using = "//div//div//h3//span//span")]
-        public IList<IWebElement> MailInfo { get; set; }
+        public ReadOnlyCollection<IWebElement> MailInfo { get; set; }
         [FindsBy(How = How.XPath, Using = "//input[@class='_4b7k _4b7k_big _53rs']")]
-        public IList<IWebElement> CompanyInfo { get; set; }
+        public ReadOnlyCollection<IWebElement> CompanyInfo { get; set; }
         [FindsBy(How = How.XPath, Using = "//button//div//div")]
         public IWebElement ButtonContinue { get; set; }
-        [FindsBy(How = How.XPath, Using = "//a[@href='/ads/creativehub/home/?crst_nav_source=SPLASH_MENU']//span//a")]
+        [FindsBy(How = How.XPath, Using = "//div//div//div//div//a[@id='u_0_1c']")]
         public IWebElement ButtonTaoTaiKhoan { get; set; }
+        [FindsBy(How = How.XPath, Using = "//div//div//div//div//a[@id='u_0_i']")]
+        public IWebElement ButtonTaoTaiKhoanDaCo { get; set; }
         [FindsBy(How = How.XPath, Using = "//div//div//div//div//a[@id='nux-nav-button']")]
         public IWebElement ButtonNext { get; set; }
         [FindsBy(How = How.XPath, Using = "//input[@class='_4b7k _4b7k_big _53rs']")]
-        public IList<IWebElement> CompanyForm { get; set; }
+        public ReadOnlyCollection<IWebElement> CompanyForm { get; set; }
         [FindsBy(How = How.XPath, Using = "//div//span//div//div//button")]
-        public IList<IWebElement> ButtonSubmit { get; set; }
+        public ReadOnlyCollection<IWebElement> ButtonSubmit { get; set; }
         [FindsBy(How = How.XPath, Using = "//div//span//div//div//button")]
         public IWebElement ButtonFinish { get; set; }
         [FindsBy(How = How.XPath, Using = "//div[@class = '_2ha7']//button")]
         public IWebElement ButtomCombobox { get; set; }
         [FindsBy(How = How.XPath, Using = "//div//div//div//div//div//div//span//div//div//div//div//div//div")]
-        public IList<IWebElement> ListCountry { get; set; }
+        public ReadOnlyCollection<IWebElement> ListCountry { get; set; }
         /// <summary>
         /// If account need check telephone number
         /// </summary>
@@ -65,7 +67,7 @@ namespace Bussiness
             chromeOption.AddArgument("disable-infobars");
             dri = new ChromeDriver(chromeDriverService, chromeOption);
             dri.Navigate().GoToUrl("https://m.facebook.com/login.php");
-            dri.Manage().Window.Size = new System.Drawing.Size(300, 600);
+         //   dri.Manage().Window.Size = new System.Drawing.Size(300, 600);
             this.driver = dri;
             waiter = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
             library = new LibrarySelenium(driver, waiter);
@@ -186,12 +188,17 @@ namespace Bussiness
         }
         public void TaoBussiness(string mail)
         {
-            driver.Navigate().GoToUrl("https://business.facebook.com/");
-            if (library.IsAjaxLoaded() && library.IsLoadingComplete() && library.ElementIsVisible(ButtonTaoTaiKhoan))
+            driver.Navigate().GoToUrl("https://business.facebook.com/overview");
+            if (library.IsAjaxLoaded() && library.IsLoadingComplete())
             {
                 try
                 {
-                    ButtonTaoTaiKhoan.Click();
+                    if(library.ElementIsVisible(ButtonTaoTaiKhoan))
+                     ButtonTaoTaiKhoan.Click();
+                    else if(library.ElementIsVisible(ButtonTaoTaiKhoanDaCo))
+                    {
+                        ButtonTaoTaiKhoanDaCo.Click();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -201,21 +208,32 @@ namespace Bussiness
                 }
                 if (library.ElementsIsVisible(By.XPath("//input[@class='_4b7k _4b7k_big _53rs']")))
                 {
-                    CompanyInfo[0].SendKeys(CompanyInfo[1].GetAttribute("value").ToString());
-                    CompanyInfo[2].SendKeys(mail);
+                    string [] str  = CompanyInfo[1].GetAttribute("value").ToString().Split('0');
+                    try
+                    {
+                        string strName = str.Length > 1 ? str[0] + " 0" + int.Parse(str[1]).ToString() : str[0] + " 01";
+                        CompanyInfo[0].SendKeys(strName);
+                        CompanyInfo[2].SendKeys(mail);
+                    }
+                    catch
+                    {
+                        CompanyInfo[0].SendKeys(CompanyInfo[1].GetAttribute("value").ToString());
+                        CompanyInfo[2].SendKeys(mail);
+                    }
                     if (library.ElementIsVisible(ButtonContinue))
                     {
                         ButtonContinue.Click();
-                        if (library.ElementsIsVisible(By.XPath("//input[@class='_4b7k _4b7k_big _53rs']")))
+                        if (
+                            library.ElementsIsVisible(By.XPath("//input[@class='_4b7k _4b7k_big _53rs']")))
                         {
                             // Input form
-                            Thread.Sleep(3000);
-                            if (library.IsLoadingComplete() && library.IsAjaxLoaded())
+                            if (true)
                             {
                                 foreach (var ipForm in CompanyForm)
                                 {
                                     if (library.ElementIsVisible(ipForm))
                                     {
+                                        Thread.Sleep(10);
                                         ipForm.SendKeys(RandomString(20));
                                     }
                                 }
@@ -229,9 +247,7 @@ namespace Bussiness
 
                                     if (library.ElementIsVisible(CountryText))
                                     {
-                                        Thread.Sleep(1500);
                                         CountryText.SendKeys("Vi");
-                                        Thread.Sleep(1200);
                                         if (library.ElementsIsVisible(By.XPath("//div//div//div//div//div//div//span//div//div//div//div//div//div")))
                                         {
                                             if (library.ElementIsVisible(ListCountry[0]))

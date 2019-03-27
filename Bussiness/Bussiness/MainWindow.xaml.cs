@@ -76,7 +76,8 @@ namespace Bussiness
             inputDataLogin.Chon += (_sender, _args) =>
             {
                 string dataCallback = (_sender as InputDataLogin).txtDataInput.Text;
-                List<string> ds = dataCallback.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).ToList();
+                List<string> ds = dataCallback.Split(new char[] { '\r', '\n' },
+                    StringSplitOptions.RemoveEmptyEntries).ToList();
                 foreach (var item in ds)
                 {
                     danhSachCookie.Add(new Model() { Name = item, TrangThai = "Đang chờ!!" });
