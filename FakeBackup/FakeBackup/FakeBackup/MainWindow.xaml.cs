@@ -78,7 +78,7 @@ namespace FakeBackup
                                 {
                                     danhSachId.Add(_id);
                                     URL = string.Concat(new string[] { URL, "{\"method\":\"GET\",\"relative_url\":\"?ids=", _id,
-                                            "&fields=id,name,picture,photos.limit(", "15", "){source,width,height}\"}," });
+                                            "&fields=id,name,picture,photos.limit(", "15", "){}\"}," });
                                     if (danhSachId.Count == 200 ? true : i == friend -1 )
                                     {
                                         URL = string.Concat("[", URL, "]");
@@ -104,13 +104,21 @@ namespace FakeBackup
                                                     JObject jObjects2 = JObject.Parse(jArrays[j]["body"].ToString());
                                                     string arr = jObjects2[id_]["photos"]["data"].ToString();
                                                     JArray jArrayDanhSach = JArray.Parse(arr);
+                                                    if (danhSachAnh.Count != 0)
+                                                    {
+                                                        danhSachAnh.Add("\n");
+                                                    }
                                                     for (int k = 0; k < jArrayDanhSach.Count; k++)
                                                     {
+                                                        string arrBack = jArrayDanhSach[k]["images"].ToString(); // new
+                                                        JArray jArrayDanhSachBack = JArray.Parse(arrBack); // new
+
                                                         danhSachAnh.Add(id_ + "*" +
                                                             jObjects2[id_]["name"].ToString() + "*" +
-                                                            jArrayDanhSach[k]["source"].ToString() + "|" + jArrayDanhSach[k]["width"] + "|" + jArrayDanhSach[k]["height"].ToString());
+                                                           jArrayDanhSachBack[jArrayDanhSachBack.Count -1]["source"].ToString() + "|" +
+                                                           jArrayDanhSachBack[jArrayDanhSachBack.Count - 1]["width"] + "|" +
+                                                           jArrayDanhSachBack[jArrayDanhSachBack.Count - 1]["height"].ToString());
                                                     }
-                                                    danhSachAnh.Add("\r\n");
                                                 }
                                                 catch (Exception ex)
                                                 {

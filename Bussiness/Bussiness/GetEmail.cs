@@ -26,11 +26,11 @@ namespace Bussiness
         [FindsBy(How = How.XPath, Using = "//div//div//div//div//div//span//input")]
         public IWebElement CountryText { get; set; }
         [FindsBy(How = How.XPath, Using = "//div[@class='_5r7k _5r7m']")]
-        public ReadOnlyCollection<IWebElement> Profile { get; set; }
+        public IList<IWebElement> Profile { get; set; }
         [FindsBy(How = How.XPath, Using = "//div//div//h3//span//span")]
-        public ReadOnlyCollection<IWebElement> MailInfo { get; set; }
+        public IList<IWebElement> MailInfo { get; set; }
         [FindsBy(How = How.XPath, Using = "//input[@class='_4b7k _4b7k_big _53rs']")]
-        public ReadOnlyCollection<IWebElement> CompanyInfo { get; set; }
+        public IList<IWebElement> CompanyInfo { get; set; }
         [FindsBy(How = How.XPath, Using = "//button//div//div")]
         public IWebElement ButtonContinue { get; set; }
         [FindsBy(How = How.XPath, Using = "//div//div//div//div//a[@id='u_0_1c']")]
@@ -39,16 +39,16 @@ namespace Bussiness
         public IWebElement ButtonTaoTaiKhoanDaCo { get; set; }
         [FindsBy(How = How.XPath, Using = "//div//div//div//div//a[@id='nux-nav-button']")]
         public IWebElement ButtonNext { get; set; }
-        [FindsBy(How = How.XPath, Using = "//input[@class='_4b7k _4b7k_big _53rs']")]
-        public ReadOnlyCollection<IWebElement> CompanyForm { get; set; }
+        [FindsBy(How = How.XPath, Using = "//div//div//div//div//div//div//div//div//div//div//label//input[@class='_4b7k _4b7k_big _53rs']")]
+        public IList<IWebElement> CompanyForm { get; set; }
         [FindsBy(How = How.XPath, Using = "//div//span//div//div//button")]
-        public ReadOnlyCollection<IWebElement> ButtonSubmit { get; set; }
+        public IList<IWebElement> ButtonSubmit { get; set; }
         [FindsBy(How = How.XPath, Using = "//div//span//div//div//button")]
         public IWebElement ButtonFinish { get; set; }
         [FindsBy(How = How.XPath, Using = "//div[@class = '_2ha7']//button")]
         public IWebElement ButtomCombobox { get; set; }
         [FindsBy(How = How.XPath, Using = "//div//div//div//div//div//div//span//div//div//div//div//div//div")]
-        public ReadOnlyCollection<IWebElement> ListCountry { get; set; }
+        public IList<IWebElement> ListCountry { get; set; }
         /// <summary>
         /// If account need check telephone number
         /// </summary>
@@ -208,7 +208,7 @@ namespace Bussiness
                 }
                 if (library.ElementsIsVisible(By.XPath("//input[@class='_4b7k _4b7k_big _53rs']")))
                 {
-                    string [] str  = CompanyInfo[1].GetAttribute("value").ToString().Split('0');
+                    string[] str = CompanyInfo[1].GetAttribute("value").ToString().Split('0');
                     try
                     {
                         string strName = str.Length > 1 ? str[0] + " 0" + int.Parse(str[1]).ToString() : str[0] + " 01";
@@ -224,42 +224,28 @@ namespace Bussiness
                     {
                         ButtonContinue.Click();
                         if (
-                            library.ElementsIsVisible(By.XPath("//input[@class='_4b7k _4b7k_big _53rs']")))
+                            library.ElementsIsVisible(By.XPath("//div//div//div//div//div//div//div//div//div//div//label//input[@class='_4b7k _4b7k_big _53rs']")))
                         {
                             // Input form
-                            if (true)
+                            CompanyForm[0].SendKeys(RandomString(20));
+                            CompanyForm[1].SendKeys(RandomString(20));
+                            CompanyForm[2].SendKeys(RandomString(20));
+                            CompanyForm[3].SendKeys(RandomString(20));
+                            CompanyForm[4].SendKeys(RandomString(20));
+                            CompanyForm[5].SendKeys("0385102879");
+                            CompanyForm[6].SendKeys("https://www.24h.com.vn/");
+                            if (library.ElementIsVisible(ButtomCombobox))
                             {
-                                foreach (var ipForm in CompanyForm)
-                                {
-                                    if (library.ElementIsVisible(ipForm))
-                                    {
-                                        Thread.Sleep(10);
-                                        ipForm.SendKeys(RandomString(20));
-                                    }
-                                }
-                                CompanyForm[5].SendKeys(Keys.Control + "a");
-                                CompanyForm[5].SendKeys("0385102879");
-                                CompanyForm[6].SendKeys(Keys.Control + "a");
-                                CompanyForm[6].SendKeys("https://www.24h.com.vn/");
-                                if (library.ElementIsVisible(ButtomCombobox))
-                                {
-                                    ButtomCombobox.Click();
+                                ButtomCombobox.Click();
 
-                                    if (library.ElementIsVisible(CountryText))
+                                if (library.ElementIsVisible(CountryText))
+                                {
+                                    CountryText.SendKeys("Vi");
+                                    if (library.ElementsIsVisible(By.XPath("//div//div//div//div//div//div//span//div//div//div//div//div//div")))
                                     {
-                                        CountryText.SendKeys("Vi");
-                                        if (library.ElementsIsVisible(By.XPath("//div//div//div//div//div//div//span//div//div//div//div//div//div")))
+                                        if (library.ElementIsVisible(ListCountry[0]))
                                         {
-                                            if (library.ElementIsVisible(ListCountry[0]))
-                                            {
-                                                ListCountry[0].Click();
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Email = "Chọn quốc gia thất bại";
-                                            driver.Close();
-                                            return;
+                                            ListCountry[0].Click();
                                         }
                                     }
                                     else
@@ -268,7 +254,6 @@ namespace Bussiness
                                         driver.Close();
                                         return;
                                     }
-
                                 }
                                 else
                                 {
@@ -276,28 +261,35 @@ namespace Bussiness
                                     driver.Close();
                                     return;
                                 }
-                                if (library.ElementsIsVisible(By.XPath("//div//span//div//div//button")))
+
+                            }
+                            else
+                            {
+                                Email = "Chọn quốc gia thất bại";
+                                driver.Close();
+                                return;
+                            }
+                            if (library.ElementsIsVisible(By.XPath("//div//span//div//div//button")))
+                            {
+                                if (library.ElementIsVisible(ButtonSubmit[1]))
                                 {
-                                    if (library.ElementIsVisible(ButtonSubmit[1]))
+                                    ButtonSubmit[1].Click();
+                                    if (library.IsAjaxLoaded() && library.IsLoadingComplete())
                                     {
-                                        ButtonSubmit[1].Click();
-                                        if (library.IsAjaxLoaded() && library.IsLoadingComplete())
+                                        if (library.ElementIsVisible(ButtonFinish))
                                         {
-                                            if (library.ElementIsVisible(ButtonFinish))
-                                            {
-                                                ButtonFinish.Click();
-                                            }
-                                            Email = "Thành công!!";
-                                            driver.Close();
-                                            return;
+                                            ButtonFinish.Click();
                                         }
-                                    }
-                                    else
-                                    {
-                                        Email = "Gửi submit thất bại!!";
+                                        Email = "Thành công!!";
                                         driver.Close();
                                         return;
                                     }
+                                }
+                                else
+                                {
+                                    Email = "Gửi submit thất bại!!";
+                                    driver.Close();
+                                    return;
                                 }
                             }
                         }
