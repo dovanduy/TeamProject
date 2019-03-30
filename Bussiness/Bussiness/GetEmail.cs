@@ -78,19 +78,19 @@ namespace Bussiness
         {
             if (driver != null)
             {
-                driver.Manage().Cookies.DeleteAllCookies();
-                string[] split_cookie = cookie.Split(';');
-                int cout = split_cookie.Length;
-                if (split_cookie.Length <= 1) return;
-                for (int i = 0; i < cout; i++)
-                {
-                    string[] sub_cookie = split_cookie[i].Split('=');
-                    if (sub_cookie.Length > 1)
-                    {
-                        driver.Manage().Cookies.AddCookie(new OpenQA.Selenium.Cookie(sub_cookie[0].Trim(),
-                            sub_cookie[1].Trim()));
-                    }
-                }
+                //driver.Manage().Cookies.DeleteAllCookies();
+                //string[] split_cookie = cookie.Split(';');
+                //int cout = split_cookie.Length;
+                //if (split_cookie.Length <= 1) return;
+                //for (int i = 0; i < cout; i++)
+                //{
+                //    string[] sub_cookie = split_cookie[i].Split('=');
+                //    if (sub_cookie.Length > 1)
+                //    {
+                //        driver.Manage().Cookies.AddCookie(new OpenQA.Selenium.Cookie(sub_cookie[0].Trim(),
+                //            sub_cookie[1].Trim()));
+                //    }
+                //}
                 driver.Navigate().GoToUrl("https://m.facebook.com/home.php");
             }
         }
@@ -211,9 +211,15 @@ namespace Bussiness
                     string[] str = CompanyInfo[1].GetAttribute("value").ToString().Split('0');
                     try
                     {
-                        string strName = str.Length > 1 ? str[0] + " 0" + int.Parse(str[1]).ToString() : str[0] + " 01";
-                        CompanyInfo[0].SendKeys(strName);
-                        CompanyInfo[2].SendKeys(mail);
+                        string strName = str.Length > 1 ? str[0] + " 0" + int.Parse(str[1]).ToString() + 1 : str[0] + " 01";
+                        if (library.ElementIsVisible(CompanyForm[0]))
+                        {
+                            CompanyInfo[0].SendKeys(strName);
+                        }
+                        if (library.ElementIsVisible(CompanyForm[2]))
+                        {
+                            CompanyInfo[2].SendKeys(mail);
+                        }
                     }
                     catch
                     {
@@ -224,16 +230,38 @@ namespace Bussiness
                     {
                         ButtonContinue.Click();
                         if (
-                            library.ElementsIsVisible(By.XPath("//div//div//div//div//div//div//div//div//div//div//label//input[@class='_4b7k _4b7k_big _53rs']")))
+                            library.IsAjaxLoaded() && library.ElementsIsVisible(By.XPath("//div//div//div//div//div//div//div//div//div//div//label//input[@class='_4b7k _4b7k_big _53rs']")))
                         {
                             // Input form
-                            CompanyForm[0].SendKeys(RandomString(20));
-                            CompanyForm[1].SendKeys(RandomString(20));
-                            CompanyForm[2].SendKeys(RandomString(20));
-                            CompanyForm[3].SendKeys(RandomString(20));
-                            CompanyForm[4].SendKeys(RandomString(20));
-                            CompanyForm[5].SendKeys("0385102879");
-                            CompanyForm[6].SendKeys("https://www.24h.com.vn/");
+
+                            if (library.ElementIsVisible(CompanyForm[1]))
+                            {
+                                CompanyForm[1].SendKeys(RandomString(20));
+                            }
+                            if (library.ElementIsVisible(CompanyForm[2]))
+                            {
+                                CompanyForm[2].SendKeys(RandomString(20));
+                            }
+                            if (library.ElementIsVisible(CompanyForm[3]))
+                            {
+                                CompanyForm[3].SendKeys(RandomString(20));
+                            }
+                            if (library.ElementIsVisible(CompanyForm[4]))
+                            {
+                                CompanyForm[4].SendKeys(RandomString(20));
+                            }
+                            if (library.ElementIsVisible(CompanyForm[5]))
+                            {
+                                CompanyForm[5].SendKeys("0385102879");
+                            }
+                            if (library.ElementIsVisible(CompanyForm[6]))
+                            {
+                                CompanyForm[6].SendKeys("https://www.24h.com.vn/");
+                            }
+                            if (library.ElementIsVisible(CompanyForm[0]))
+                            {
+                                CompanyForm[0].SendKeys(RandomString(20));
+                            }
                             if (library.ElementIsVisible(ButtomCombobox))
                             {
                                 ButtomCombobox.Click();
@@ -243,7 +271,7 @@ namespace Bussiness
                                     CountryText.SendKeys("Vi");
                                     if (library.ElementsIsVisible(By.XPath("//div//div//div//div//div//div//span//div//div//div//div//div//div")))
                                     {
-                                        if (library.ElementIsVisible(ListCountry[0]))
+                                        if (library.IsAjaxLoaded() && library.ElementIsVisible(ListCountry[0]))
                                         {
                                             ListCountry[0].Click();
                                         }
@@ -274,15 +302,19 @@ namespace Bussiness
                                 if (library.ElementIsVisible(ButtonSubmit[1]))
                                 {
                                     ButtonSubmit[1].Click();
-                                    if (library.IsAjaxLoaded() && library.IsLoadingComplete())
+                                    if (library.IsAjaxLoaded() && library.IsLoadingComplete() && library.IsLoadingComplete())
                                     {
                                         if (library.ElementIsVisible(ButtonFinish))
                                         {
                                             ButtonFinish.Click();
                                         }
-                                        Email = "Thành công!!";
-                                        driver.Close();
-                                        return;
+                                        if (library.IsAjaxLoaded() && library.IsLoadingComplete())
+                                        {
+                                            Email = "Thành công!!";
+                                            // driver.Close();
+                                            // Console.WriteLine("12312");
+                                            // TO BE CONTINUE.
+                                        }
                                     }
                                 }
                                 else

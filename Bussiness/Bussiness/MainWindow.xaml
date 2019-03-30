@@ -6,17 +6,174 @@
         xmlns:local="clr-namespace:Bussiness"
         mc:Ignorable="d"
         Closed="Window_Closed"
+        Title="Tạo BM"
+        ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen"
         WindowStyle="ThreeDBorderWindow"
-        Height="600" Width="800">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="0.6*"></RowDefinition>
-            <RowDefinition Height="4*"></RowDefinition>
-            <RowDefinition Height="0.6*"></RowDefinition>
-        </Grid.RowDefinitions>
+        Height="700" Width="900">
+    <Border Background="GhostWhite"
+                BorderBrush="Gainsboro" BorderThickness="2">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="6*"></RowDefinition>
+                <RowDefinition Height="4*"></RowDefinition>
+                <RowDefinition Height="0.6*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="3*"></RowDefinition>
+                    <RowDefinition Height="7*"></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBox Name="txtCookie" FontSize="13" TextWrapping="Wrap" AcceptsReturn="True"
+                         Margin="10" Grid.Row="0"></TextBox>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition></ColumnDefinition>
+                        <ColumnDefinition></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+                    <GroupBox FontSize="15" 
+                              Header="Thông tin thẻ"
+                              Margin="10" Grid.Column="0">
+                        <Grid Margin="10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                                <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                            <StackPanel Name="stQuocGiaLapHoaDon"
+                                        Grid.Row="0" 
+                                        Orientation="Vertical">
+                                <TextBlock FontSize="13" 
+                                           Text="Quốc gia lập hóa đơn"
+                                           ></TextBlock>
+                                <ComboBox SelectedValuePath="{Binding ValueQuocGia}" 
+                                          Name="cbbQuocGiaLapHoaDon"
+                                          SelectedIndex="0"
+                                          ItemsSource="{Binding}" Height="30">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontStyle="Normal"
+                                                       FontSize="15" 
+                                                       Text="{Binding NameQuocGia}"
+                                                       ></TextBlock>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                            <StackPanel Name="stTienTe" 
+                                        Grid.Row="1" 
+                                        Orientation="Vertical">
+                                <TextBlock FontSize="13"
+                                           Text="Tiền tệ"
+                                           ></TextBlock>
+                                <ComboBox SelectedValuePath="{Binding ValueTienTe}" 
+                                          Name="cbbTienTe"
+                                          SelectedIndex="0"
+                                          ItemsSource="{Binding}" Height="30">
+                                    <ComboBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontStyle="Normal" 
+                                                       FontSize="15" 
+                                                       Text="{Binding NameTienTe}"
+                                                       ></TextBlock>
+                                        </DataTemplate>
+                                    </ComboBox.ItemTemplate>
+                                </ComboBox>
+                            </StackPanel>
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="5*"></ColumnDefinition>
+                                    <ColumnDefinition Width="3*"></ColumnDefinition>
+                                    <ColumnDefinition Width="3*"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel  Orientation="Vertical">
+                                    <TextBlock FontSize="13"
+                                               Text="Số thẻ"></TextBlock>
+                                    <TextBox Name="txtSoThe" FontSize="18" Height="30"
+                                         ></TextBox>
+                                </StackPanel>
+                                <StackPanel Margin="10 0 0 0"
+                                            Grid.Column="1" Orientation="Vertical">
+                                    <TextBlock FontSize="13"
+                                               Text="Tháng"></TextBlock>
+                                    <TextBox Name="txtThang" FontSize="18" Height="30"
+                                         ></TextBox>
+                                </StackPanel>
+                                <StackPanel Margin="10 0 0 0" Grid.Column="2" Orientation="Vertical">
+                                    <TextBlock FontSize="13"
+                                               Text="Năm"></TextBlock>
+                                    <TextBox Name="txtNam" FontSize="18" Height="30"
+                                         ></TextBox>
+                                </StackPanel>
+                            </Grid>
 
-        <DataGrid
+                            <StackPanel Grid.Row="3" Orientation="Vertical">
+                                <TextBlock FontSize="13" Text="Mã bảo mật"></TextBlock>
+                                <PasswordBox Name="txtPass"  FontSize="18"
+                                          Height="30"></PasswordBox>
+                            </StackPanel>
+                        </Grid>
+                    </GroupBox>
+                    <StackPanel Grid.Column="1">
+                        <GroupBox FontSize="15" 
+                              Header="Thông tin quảng cáo"
+                              Margin="10" >
+                            <Grid Margin="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                    <RowDefinition></RowDefinition>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row="0" Orientation="Vertical">
+                                    <TextBlock FontSize="13" Text="Tên tài khoản quảng cáo"></TextBlock>
+                                    <TextBox Name="txtTenTaiKhoanQuangCao"  FontSize="18"
+                                          Height="30"></TextBox>
+                                </StackPanel>
+                                <StackPanel Name="stMuiGio" Grid.Row="1" Orientation="Vertical">
+                                    <TextBlock FontSize="13" Text="Múi giờ"></TextBlock>
+                                    <ComboBox SelectedValuePath="{Binding ValueMuiGio}" 
+                                          Name="cbbMuiGio"
+                                          SelectedIndex="0"
+                                          ItemsSource="{Binding}" Height="30">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock FontStyle="Normal" 
+                                                           FontSize="15"
+                                                           Text="{Binding NameMuiGio}"></TextBlock>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Name="stLoaiTien" Grid.Row="2" Orientation="Vertical">
+                                    <TextBlock FontSize="13" Text="Loại tiền"></TextBlock>
+                                    <ComboBox SelectedValuePath="{Binding ValueLoaiTien}" 
+                                          Name="cbbLoaiTien"
+                                          SelectedIndex="0"
+                                          ItemsSource="{Binding}" Height="30">
+                                        <ComboBox.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock FontStyle="Normal"
+                                                           FontSize="15" Text="{Binding NameLoaiTien}"></TextBlock>
+                                            </DataTemplate>
+                                        </ComboBox.ItemTemplate>
+                                    </ComboBox>
+                                </StackPanel>
+                            </Grid>
+                        </GroupBox>
+                        <Button Name="btnThem"
+                                Click="btnThem_Click"
+                                Margin="150 0 150 0" Height="35" Grid.Row="3">
+                            THÊM
+                        </Button>
+                    </StackPanel>
+
+                </Grid>
+            </Grid>
+            <!--<Button Name ="btnImport" Click="btnImport_Click" Grid.Row="0" Margin="40 10 40 10" Content="Import"></Button>-->
+            <DataGrid
                   IsReadOnly="True"
             Grid.Row="1"
                   GridLinesVisibility="All"
@@ -27,63 +184,61 @@
                   ItemsSource="{Binding}"
                   x:Name="dataGridDanhSachTaiKhoan"
                   CanUserAddRows="False"
-            Margin="10"
+            Margin="5 5 5 0"
                   FontSize="13" AutoGenerateColumns="False">
-            <DataGrid.Columns>
-                <!--UID-->
-                <DataGridTemplateColumn     
+                <DataGrid.Columns>
+                    <!--UID-->
+                    <DataGridTemplateColumn     
                     CanUserSort="True"
                     Width="7*">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock       
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock       
                                 IsHitTestVisible="False"
                                 Text="{Binding Name}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Height="30"
+                                Height="25"
                                 Foreground="Black"
                                 TextTrimming="WordEllipsis">
-                            </TextBlock>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock 
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock 
                                 Text="Cookie">
-                            </TextBlock>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.HeaderTemplate>
-                </DataGridTemplateColumn>
-                <DataGridTemplateColumn     
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn     
                     CanUserSort="True"
                     Width="3*">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <TextBlock       
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <TextBlock       
                                 IsHitTestVisible="False"
                                 Text="{Binding TrangThai}"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Height="30"
+                                Height="25"
                                 Foreground="Black"
                                 TextTrimming="WordEllipsis">
-                            </TextBlock>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                    <DataGridTemplateColumn.HeaderTemplate>
-                        <DataTemplate>
-                            <TextBlock 
-                                Text="STATUS">
-                            </TextBlock>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.HeaderTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-            
-        </DataGrid>
-
-        <Button Name ="btnImport" Click="btnImport_Click" Grid.Row="0" Margin="40 10 40 10" Content="Import"></Button>
-        <Button Name="btnRun" Click="btnRun_Click" Grid.Row="2" Margin="40 10 40 10" Content="RUN"></Button>
-    </Grid>
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.HeaderTemplate>
+                            <DataTemplate>
+                                <TextBlock 
+                                Text="Trạng thái">
+                                </TextBlock>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.HeaderTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+            <Button Name="btnRun" Click="btnRun_Click" Grid.Row="2" Margin="400 5 400 5" Content="RUN"></Button>
+        </Grid>
+    </Border>
 </Window>

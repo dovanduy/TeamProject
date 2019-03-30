@@ -99,6 +99,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model.cs" />
+    <Compile Include="Models\LoaiTien.cs" />
+    <Compile Include="Models\MuiGio.cs" />
+    <Compile Include="Models\QuocGia.cs" />
+    <Compile Include="Models\TienTe.cs" />
     <Compile Include="NotifiableCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

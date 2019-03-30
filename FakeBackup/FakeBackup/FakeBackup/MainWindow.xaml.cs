@@ -78,7 +78,7 @@ namespace FakeBackup
                                 {
                                     danhSachId.Add(_id);
                                     URL = string.Concat(new string[] { URL, "{\"method\":\"GET\",\"relative_url\":\"?ids=", _id,
-                                            "&fields=id,name,picture,photos.limit(", "15", "){}\"}," });
+                                            "&fields=id,name,photos.limit(", "15", "){}\"}," });
                                     if (danhSachId.Count == 200 ? true : i == friend -1 )
                                     {
                                         URL = string.Concat("[", URL, "]");
